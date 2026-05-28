@@ -1,9 +1,8 @@
 # DMT SCW Frontend — Project Context
 
-> **Program Version: 1.5.3** — Page background forced dark + complete
-> DatePicker/TimePicker dark-mode coverage (input text, popup panels,
-> header strip, weekday row, cells, today/selected/disabled/range,
-> time-panel columns, footer "Now" button, range arrow)
+> **Program Version: 1.5.4** — 3-level click-to-expand accordion
+> sidebar menu (single-open per level, keyboard accessible, data-driven
+> from `src/data/menu_tree_semantic.json`)
 
 This document is the primary source of truth for the project. Read it before
 making any change.
@@ -96,7 +95,16 @@ dmt-scw-frontend/
     │   ├── ThemeToggle.js
     │   └── themeBootstrap.js     ← inlined into public/index.html
     ├── components/               ← Reusable UI (button, chart, form, table…)
+    ├── data/
+    │   └── menu_tree_semantic.json   ← (v1.5.4) 3-level sidebar menu source
     ├── contrainers/DefaultLayout/← Authenticated app shell (sidebar+content)
+    │   ├── DefaultLayout.js
+    │   ├── DefaultMenu.js           ← sidebar shell (logo/user/toggle/logout)
+    │   ├── AccordionMenu.js         ← (v1.5.4) 3-level accordion menu
+    │   ├── accordion-menu.scss      ← (v1.5.4) accordion styles
+    │   ├── menuTree.js              ← (v1.5.4) JSON→tree adapter + active path
+    │   ├── HeadTitle.js
+    │   └── Logout.js
     ├── views/                    ← M01..M10 + Dashboard + pages/
     ├── redux/                    ← store / actions / reducers
     ├── route/                    ← route registry per module
@@ -113,6 +121,70 @@ dmt-scw-frontend/
 `/changepassword`, and `/` → `DefaultLayout` which composes a sidebar
 (`DefaultMenu`) and a content area rendering one of `route/Main.js`'s
 module-keyed children based on user permissions.
+
+### 4.5 Sidebar Menu (v1.5.4 — 3-level accordion)
+
+The sidebar is the `<AccordionMenu>` component
+(`src/contrainers/DefaultLayout/AccordionMenu.js`) rendered inside the
+existing `<DefaultMenu>` shell. It replaces the legacy 2-level dropdown
+with a 3-level click-to-expand tree.
+
+**Data source.** `src/data/menu_tree_semantic.json` defines the tree:
+
+```json
+{
+  "menu": [
+    { "id": "G01", "name": "...",                    // Level 1 group
+      "children": [
+        { "id": "G0101", "name": "...",              // Level 2 subgroup
+          "children": [
+            { "id": "M010000001", "name": "..." }    // Level 3 leaf
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+Top-level entries are `G01..G08`, second-level entries are `G0xxx`,
+leaves are the existing `M0xxxxxxx` ids. Leaves carry **only** an id +
+display label in the JSON; their routes (`link`) are resolved at runtime
+from the legacy `src/_navbar.js` via `menuTree.js#buildAccordionTree`,
+and their final labels are pulled from `localStorage.user_data.pms[].
+menuNameTh/En` so backend-supplied translations still win when present.
+
+**Permissions.** A leaf is included only if its id appears in the
+logged-in user's `pms` array. Empty L2/L1 branches are dropped so the
+user never sees a dead-end group.
+
+**Accordion behaviour.** Mutually exclusive within each level:
+
+- Tapping a Level 1 group expands it and collapses any previously open
+  Level 1 group (single-open per level).
+- Tapping a Level 2 group expands it and collapses any previously open
+  Level 2 group *within the same Level 1* (single-open per level).
+- Tapping an already-open group toggles it closed.
+- Tapping a Level 3 leaf navigates via `react-router-dom`. Re-tapping
+  the active leaf triggers `window.location.reload()` (matches the
+  legacy DefaultMenu behaviour the staff rely on).
+- The menu auto-expands to reveal the active leaf when the route changes
+  (e.g. deep-link or programmatic navigation), without auto-collapsing
+  any group the user has chosen to keep open.
+
+**Accessibility.** The list is `role="tree"`; groups are
+`role="treeitem"` buttons with `aria-expanded` reflecting state and
+`aria-controls` pointing at their child list (`role="group"`); leaves
+are `role="treeitem"` with `aria-selected` on the active one. Enter and
+Space toggle groups; arrow keys are intentionally not hijacked so the
+sidebar coexists with route-level keyboard flows.
+
+**Styling.** `accordion-menu.scss` lives next to the component. All
+colours are CSS custom properties from the semantic token layer
+(`_tokens.scss`), so the menu follows the active theme automatically.
+Expand/collapse uses a max-height transition (no JS measurement).
+Long menus scroll via the `.sidebar-menu-scroll` wrapper so the logo /
+user info / theme toggle / logout / version footer stay anchored.
 
 ### 4.2 State
 `redux/store/index.js` builds a single store with thunk middleware. Only
@@ -414,3 +486,4 @@ finish. See the **Memory requirement** call-out in §6.1.
 | 1.5.1   | 2026-05-28 | Dark Mode polish — fix white table-summary cells / fixed columns, tone down dark brand from neon to subdued purple, theme image preview + spin overlays. |
 | 1.5.2   | 2026-05-28 | Dark Mode total audit — global defensive overrides catch inline `color: 'black'` / `rgba(0,0,0,*)` / `gray` / hardcoded white backgrounds across all 500+ legacy spots; stronger antd Card body / Typography / link semantics in dark mode. |
 | 1.5.3   | 2026-05-28 | Force-dark `html/body/#root` bg with !important (a stale cache or antd's compiled body rule was still showing white). Full DatePicker/TimePicker re-skin — input text, suffix/separator/clear icons, popup container, header strip, weekday row, date/month/year/decade cells, today/selected/disabled/range, time-panel columns + cells, footer "Now" link, range active bar/arrow. Sidebar version footer corrected. |
+| 1.5.4   | 2026-05-28 | 3-level click-to-expand accordion sidebar. New `src/data/menu_tree_semantic.json` (G01..G08 → G0xxx → M0xxxxxxx) drives rendering; legacy `_navbar.js` only supplies leaf routes. `AccordionMenu` + `menuTree` adapter + dedicated SCSS. Single-open per level, ARIA tree semantics, smooth expand/collapse, theme-aware via existing tokens. Existing routing / permissions / HeadTitle untouched. |

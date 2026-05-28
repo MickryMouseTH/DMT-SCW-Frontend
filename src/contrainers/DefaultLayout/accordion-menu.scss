@@ -1,0 +1,180 @@
+// ---------------------------------------------------------------------------
+// AccordionMenu styles (v1.5.4)
+//
+// 3-level click-to-expand sidebar. Every visible colour is a CSS custom
+// property from `src/assets/scss/_tokens.scss` so the menu follows the
+// active theme without recompile. Animations use a max-height trick so
+// expand/collapse is smooth without requiring a JS-driven measurement.
+// ---------------------------------------------------------------------------
+
+.accordion-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.85rem;
+  width: 100%;
+  background-color: var(--color-bg-surface);
+}
+
+.accordion-menu--empty {
+  padding: 16px 20px;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.accordion-menu__item {
+  list-style: none;
+  margin: 0;
+  position: relative;
+}
+
+// All clickable rows (groups + leaves)
+.accordion-menu__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  font-family: inherit;
+  font-size: inherit;
+  line-height: 1.35;
+  transition: background-color 0.15s ease, color 0.15s ease,
+    padding-left 0.15s ease;
+  text-decoration: none;
+
+  // Hide native button focus halo; we provide our own.
+  &:focus {
+    outline: none;
+  }
+  &:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: -2px;
+  }
+
+  &:hover {
+    background-color: var(--color-bg-hover);
+    color: var(--color-brand);
+  }
+}
+
+.accordion-menu__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.accordion-menu__chevron {
+  flex: 0 0 auto;
+  margin-left: 8px;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  transition: transform 0.18s ease, color 0.15s ease;
+
+  &.is-open {
+    transform: rotate(90deg);
+    color: var(--color-brand);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Level 1 — top-level groups (the original "sidebar-li" position)
+// -----------------------------------------------------------------------------
+.accordion-menu__row--l1 {
+  padding: 13px 16px 13px 18px;
+  font-weight: 600;
+  color: var(--color-brand);
+  border-top: 1px solid var(--color-divider);
+  background-color: var(--color-bg-surface);
+
+  &:hover {
+    background-color: var(--color-bg-hover);
+    color: var(--color-brand);
+  }
+}
+
+.accordion-menu__item--l1.is-active > .accordion-menu__row--l1,
+.accordion-menu__item--l1.is-open > .accordion-menu__row--l1 {
+  background-color: var(--color-brand);
+  color: var(--color-text-on-brand);
+
+  .accordion-menu__chevron {
+    color: var(--color-text-on-brand);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Level 2 — subgroups
+// -----------------------------------------------------------------------------
+.accordion-menu__row--l2 {
+  padding: 10px 14px 10px 30px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-muted);
+  border-top: 1px solid var(--color-divider);
+}
+
+.accordion-menu__item--l2.is-active > .accordion-menu__row--l2,
+.accordion-menu__item--l2.is-open > .accordion-menu__row--l2 {
+  color: var(--color-brand);
+  background-color: var(--color-bg-selected);
+}
+
+// -----------------------------------------------------------------------------
+// Level 3 — leaf items
+// -----------------------------------------------------------------------------
+.accordion-menu__row--l3 {
+  padding: 8px 14px 8px 46px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-surface-elevated);
+  border-top: 1px solid var(--color-border-subtle);
+  font-size: 0.8rem;
+
+  &:hover {
+    background-color: var(--color-bg-hover);
+    color: var(--color-brand);
+    padding-left: 50px;
+  }
+}
+
+.accordion-menu__item--l3.is-active > .accordion-menu__row--l3 {
+  color: var(--color-text-on-brand);
+  background-color: var(--color-brand);
+  font-weight: 500;
+
+  &:hover {
+    background-color: var(--color-brand-hover);
+    color: var(--color-text-on-brand);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Collapse / expand animation. Plain max-height transition — no JS
+// measurement needed. The cap (40em ≈ 14 rows × 2.8em) covers every L2
+// list in the project; larger lists scroll the sidebar (overflow already
+// handled by the parent shell).
+// -----------------------------------------------------------------------------
+.accordion-menu__children {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.25s ease;
+}
+
+.accordion-menu__children.is-open {
+  max-height: 80em;
+}
+
+// Nested L3 list inside an L2 group — give the inner animation a tighter
+// cap so each L2's expansion feels snappy.
+.accordion-menu__children--l3.is-open {
+  max-height: 60em;
+}

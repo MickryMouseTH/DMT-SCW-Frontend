@@ -148,6 +148,17 @@
   border-top: 1px solid var(--color-divider);
 }
 
+// Scroll wrapper for the v1.5.4 accordion menu. Lets the long menu list
+// scroll independently of the surrounding sidebar chrome (logo, user
+// info, theme toggle, logout, version footer) so all of those stay
+// visible no matter how deep the menu is expanded.
+.sidebar-menu-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  background-color: var(--color-bg-surface);
+}
+
 span.ant-radio-inner {
   padding: 20px;
 }
