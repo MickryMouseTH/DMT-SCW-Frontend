@@ -1,7 +1,8 @@
 // ---------------------------------------------------------------------------
-// TopHeader styles (v1.5.5)
-// Full-viewport-width header housing the horizontal L1 menu + Mode selector.
-// All colours come from the semantic token layer so the bar is theme-aware.
+// TopHeader styles (v1.5.6)
+// Slim full-viewport bar that hosts only the page Mode selector pinned to
+// the top-right. Sticky at the top of the page so the toggle is always
+// reachable. All colours come from the semantic token layer.
 // ---------------------------------------------------------------------------
 
 .top-header {
@@ -9,46 +10,25 @@
   top: 0;
   z-index: 1000;
   display: flex;
-  align-items: stretch;
-  width: 100vw;
-  max-width: 100%;
+  align-items: center;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 16px;
   background-color: var(--color-bg-surface);
   border-bottom: 1px solid var(--color-divider);
   box-shadow: 0 1px 3px var(--color-shadow-sm);
 }
 
-.top-header__menu-wrap {
+.top-header__spacer {
   flex: 1 1 auto;
-  min-width: 0;          // allow flex items to shrink properly
-  display: flex;
-  align-items: stretch;
 }
 
 .top-header__actions {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
-  padding: 0 16px;
-  border-left: 1px solid var(--color-divider);
-  background-color: var(--color-bg-surface);
 }
 
-// Responsive: on small screens (<768px) stack the actions below the menu
-// so the L1 bar still has full horizontal real estate.
-@media (max-width: 768px) {
-  .top-header {
-    flex-wrap: wrap;
-  }
-  .top-header__menu-wrap {
-    width: 100%;
-    order: 2;
-  }
-  .top-header__actions {
-    width: 100%;
-    order: 1;
-    justify-content: flex-end;
-    border-left: 0;
-    border-bottom: 1px solid var(--color-divider);
-    padding: 6px 12px;
-  }
-}
+// Below the small-screen breakpoint the existing <MobileView> guard hides
+// the authenticated shell entirely, so no responsive override is needed
+// here. Keep the rule minimal.

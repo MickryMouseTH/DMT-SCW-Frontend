@@ -1,17 +1,22 @@
 // ---------------------------------------------------------------------------
 // DefaultMenu (sidebar shell)
 //
-// v1.5.5 — slimmed down: the L1/L2/L3 accordion and the page Mode (theme)
-// selector have moved to <TopHeader> (full-viewport-width). The sidebar
-// now hosts only the brand + staff info + logout + version footer.
+// v1.5.6 — restores the v1.5.4 layout: the 3-level AccordionMenu lives in
+// the LEFT sidebar (vertical accordion). The page Mode (theme) selector
+// stays in <TopHeader> at the top-right (v1.5.5).
+//
+// The sidebar is a flex column:
+//   logo  →  staff info  →  AccordionMenu (flex-grows to fill empty space)
+//   →  logout  →  version footer
 // ---------------------------------------------------------------------------
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { connect } from "react-redux";
 import { userLogout } from "../../redux/actions/authAction";
 import Logout from "./Logout";
+import AccordionMenu from "./AccordionMenu";
 
-const DefaultMenu = (/* lng intentionally unused after v1.5.5 split */) => {
+const DefaultMenu = ({ lng }) => {
   const [userData, setUserData] = useState({});
 
   useEffect(() => {
@@ -19,9 +24,11 @@ const DefaultMenu = (/* lng intentionally unused after v1.5.5 split */) => {
       const stored = JSON.parse(localStorage.getItem("user_data"));
       if (stored) setUserData(stored);
     } catch (_e) {
-      // ignore corrupt user_data — falls back to empty sidebar
+      // ignore corrupt user_data — falls back to empty menu
     }
   }, []);
+
+  const pms = useMemo(() => (userData && userData.pms) || [], [userData]);
 
   return (
     <div className="sidebar-body">
@@ -36,12 +43,13 @@ const DefaultMenu = (/* lng intentionally unused after v1.5.5 split */) => {
         {`${userData.staffNameTh ? userData.staffNameTh : ""}`}
       </div>
 
-      {/* Spacer pushes the footer to the bottom of the sidebar */}
-      <div className="sidebar-menu-scroll" aria-hidden />
+      <div className="sidebar-menu-scroll">
+        <AccordionMenu lng={lng} pms={pms} />
+      </div>
 
       <Logout />
       <div className="version-footer shadow-sm d-flex align-items-end text-center">
-        Version 1.5.5 (2026-05-28)
+        Version 1.5.6 (2026-05-28)
       </div>
     </div>
   );

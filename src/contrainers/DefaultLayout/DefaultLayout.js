@@ -66,24 +66,13 @@ const DefaultLayout = (props) => {
       : findRoute;
   };
 
-  // Pull current user's permission whitelist for the horizontal L1 menu.
-  // Falls back to an empty array (no permissions); buildAccordionTree
-  // then renders everything, useful in dev where pms isn't seeded.
-  let _pms = [];
-  try {
-    const u = JSON.parse(localStorage.getItem("user_data"));
-    if (u && Array.isArray(u.pms)) _pms = u.pms;
-  } catch (_e) {
-    /* ignore */
-  }
-
   return (
     <Skeleton loading={loading} active>
       <BrowserView>
-        {/* v1.5.5 — full-viewport top header with horizontal L1 menu +
-            top-right Mode (theme) selector. Sits above the sidebar +
-            content row so it always spans 100% of the viewport. */}
-        <TopHeader lng={lng} pms={_pms} />
+        {/* v1.5.6 — slim full-viewport top header hosts ONLY the page
+            Mode (theme) selector pinned top-right. The main navigation
+            (3-level accordion) lives in the left sidebar — see DefaultMenu. */}
+        <TopHeader />
 
         <Row justify="center">
           <Col span={4}>
