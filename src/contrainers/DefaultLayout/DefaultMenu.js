@@ -73,7 +73,7 @@ const DefaultMenu = ({ lng, ...props }) => {
         <ThemeToggle compact />
       </div>
       <Logout />
-      <div className="version-footer shadow-sm d-flex align-items-end text-center">Version 1.5.2 (2026-05-28)</div>
+      <div className="version-footer shadow-sm d-flex align-items-end text-center">Version 1.5.3 (2026-05-28)</div>
     </div>
   )
 }

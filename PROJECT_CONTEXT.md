@@ -1,8 +1,9 @@
 # DMT SCW Frontend — Project Context
 
-> **Program Version: 1.5.2** — Global defensive overrides for inline
-> `color`/`background` styles + stronger antd Card / Typography / link
-> dark-mode coverage
+> **Program Version: 1.5.3** — Page background forced dark + complete
+> DatePicker/TimePicker dark-mode coverage (input text, popup panels,
+> header strip, weekday row, cells, today/selected/disabled/range,
+> time-panel columns, footer "Now" button, range arrow)
 
 This document is the primary source of truth for the project. Read it before
 making any change.
@@ -412,3 +413,4 @@ finish. See the **Memory requirement** call-out in §6.1.
 | 1.5.0   | 2026-05-28 | Dark Mode + semantic-token design system + dockerized build environment.|
 | 1.5.1   | 2026-05-28 | Dark Mode polish — fix white table-summary cells / fixed columns, tone down dark brand from neon to subdued purple, theme image preview + spin overlays. |
 | 1.5.2   | 2026-05-28 | Dark Mode total audit — global defensive overrides catch inline `color: 'black'` / `rgba(0,0,0,*)` / `gray` / hardcoded white backgrounds across all 500+ legacy spots; stronger antd Card body / Typography / link semantics in dark mode. |
+| 1.5.3   | 2026-05-28 | Force-dark `html/body/#root` bg with !important (a stale cache or antd's compiled body rule was still showing white). Full DatePicker/TimePicker re-skin — input text, suffix/separator/clear icons, popup container, header strip, weekday row, date/month/year/decade cells, today/selected/disabled/range, time-panel columns + cells, footer "Now" link, range active bar/arrow. Sidebar version footer corrected. |
