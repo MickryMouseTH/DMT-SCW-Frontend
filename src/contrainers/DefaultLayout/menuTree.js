@@ -72,13 +72,25 @@ const resolveLeafLabel = (leafId, semanticLabel, lng, pms) => {
   return semanticLabel;
 };
 
+// Synthetic Dashboard entry shown as the first L1 item. It has no
+// children — the AccordionMenu renders it as a direct <Link> instead of
+// an expandable group.
+const DASHBOARD_ENTRY = {
+  id: "M00",
+  name: { th: "Dashboard", en: "Dashboard" },
+  level: 1,
+  expandable: false,
+  link: "/dashboard",
+  isLeaf: true,
+};
+
 // Build the renderable accordion tree for the current user/language.
 // `lng` is one of "th" | "en"; `pms` is the user's permission array
 // (already loaded from localStorage by the caller).
 export const buildAccordionTree = (lng = "th", pms = []) => {
   const allowedIds = new Set((pms || []).map((p) => p.menuId));
 
-  return (semanticTree.menu || [])
+  const groups = (semanticTree.menu || [])
     .map((g1) => {
       const children = (g1.children || [])
         .map((g2) => {
@@ -118,6 +130,20 @@ export const buildAccordionTree = (lng = "th", pms = []) => {
       };
     })
     .filter((g1) => g1.children.length > 0);
+
+  // Resolve the Dashboard label from the user's permission record if it
+  // carries M00, falling back to the th/en label embedded above.
+  const dashboard = {
+    ...DASHBOARD_ENTRY,
+    name: resolveLeafLabel(
+      DASHBOARD_ENTRY.id,
+      DASHBOARD_ENTRY.name[lng] || DASHBOARD_ENTRY.name.th,
+      lng,
+      pms
+    ),
+  };
+
+  return [dashboard, ...groups];
 };
 
 // Locate the [L1, L2, L3] path for a given pathname, so the menu can
@@ -125,6 +151,10 @@ export const buildAccordionTree = (lng = "th", pms = []) => {
 export const findActivePath = (tree, pathname) => {
   if (!pathname) return [null, null, null];
   for (const g1 of tree) {
+    // Top-level leaves (like Dashboard) — no children, just a direct link.
+    if (g1.expandable === false && g1.link === pathname) {
+      return [g1.id, null, g1.id];
+    }
     for (const g2 of g1.children || []) {
       for (const leaf of g2.children || []) {
         if (leaf.link === pathname) return [g1.id, g2.id, leaf.id];

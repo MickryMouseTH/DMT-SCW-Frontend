@@ -7,8 +7,9 @@
 // expand/collapse is smooth without requiring a JS-driven measurement.
 // ---------------------------------------------------------------------------
 
-// v1.5.6 — in the (default) vertical/sidebar layout the menu is a flex
-// column that stretches to fill its container (.sidebar-menu-scroll).
+// v1.5.6 + v1.5.8 — in the (default) vertical/sidebar layout the menu
+// is a flex column that stretches to fill its container
+// (.sidebar-menu-scroll, which is itself a flex item in .sidebar-body).
 // L1 items grow to share the empty vertical space evenly so the sidebar
 // no longer has a blank gap below a short menu.
 .accordion-menu {
@@ -20,22 +21,34 @@
   background-color: var(--color-bg-surface);
   display: flex;
   flex-direction: column;
-  min-height: 100%;
+  flex: 1 1 auto;
 }
 
 // Closed L1 items grow to fill leftover space. An open L1 collapses back
 // to natural height so its expanded L2/L3 children can render without
 // forcing scroll.
 .accordion-menu > .accordion-menu__item--l1 {
-  flex: 1 1 auto;
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
 }
 .accordion-menu > .accordion-menu__item--l1.is-open {
   flex: 0 0 auto;
 }
 .accordion-menu > .accordion-menu__item--l1 > .accordion-menu__row--l1 {
   // make the L1 button fill its grown li so the whole tile is clickable
-  height: 100%;
-  min-height: 44px;
+  flex: 1 1 auto;
+  min-height: 48px;
+}
+// L1 leaf (e.g. Dashboard) uses a <Link> not a <button> — same look,
+// just no chevron, no expand state.
+.accordion-menu__item--l1-leaf > .accordion-menu__row--l1 {
+  flex: 1 1 auto;
+  min-height: 48px;
+}
+.accordion-menu__item--l1-leaf.is-active > .accordion-menu__row--l1 {
+  background-color: var(--color-brand);
+  color: var(--color-text-on-brand);
 }
 
 .accordion-menu--empty {

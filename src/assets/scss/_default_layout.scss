@@ -152,10 +152,17 @@
 // scroll independently of the surrounding sidebar chrome (logo, user
 // info, theme toggle, logout, version footer) so all of those stay
 // visible no matter how deep the menu is expanded.
+//
+// v1.5.8 — also a flex column so the inner .accordion-menu receives a
+// definite height; without this the L1 flex: 1 1 auto rule inside the
+// menu can't distribute the leftover vertical space (the wrapper sized
+// itself to its content instead).
 .sidebar-menu-scroll {
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   background-color: var(--color-bg-surface);
 }
 

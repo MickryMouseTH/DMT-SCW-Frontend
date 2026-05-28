@@ -278,8 +278,36 @@ const AccordionMenu = ({
       aria-label="Sidebar navigation"
     >
       {tree.map((g1) => {
-        const g1Expanded = openL1 === g1.id;
         const g1Active = activeL1 === g1.id;
+
+        // L1 LEAF (e.g. Dashboard) — no children → direct navigation,
+        // no chevron, no expand state.
+        if (g1.expandable === false && g1.link) {
+          return (
+            <li
+              key={g1.id}
+              className={`accordion-menu__item accordion-menu__item--l1 accordion-menu__item--l1-leaf ${
+                g1Active ? "is-active" : ""
+              }`}
+              role="none"
+            >
+              <Link
+                to={g1.link}
+                className="accordion-menu__row accordion-menu__row--l1"
+                role="treeitem"
+                aria-selected={g1Active}
+                onClick={() =>
+                  handleLeafClick({ id: g1.id, link: g1.link, name: g1.name })
+                }
+                title={g1.name}
+              >
+                <span className="accordion-menu__label">{g1.name}</span>
+              </Link>
+            </li>
+          );
+        }
+
+        const g1Expanded = openL1 === g1.id;
         return (
           <li
             key={g1.id}
