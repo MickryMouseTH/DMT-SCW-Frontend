@@ -3,12 +3,19 @@
 // Theme-aware via CSS custom properties (see _tokens.scss).
 // ---------------------------------------------------------------------------
 
+// v1.5.11 — Sidebar is fixed to viewport height and sticks to the top
+// while the content area scrolls. The internal `.sidebar-menu-scroll`
+// wrapper takes the leftover height between staff info and the theme
+// toggle, so when a long L2 group is expanded only the menu list
+// scrolls — the logo / staff info / toggle / logout / version footer
+// all stay anchored.
 .sidebar-body {
   width: 15vw;
-  min-height: 100vh;
-  height: 100%;
+  height: 100vh;
+  max-height: 100vh;
+  position: sticky;
+  top: 0;
   background-color: transparent;
-  float: left;
   display: flex;
   flex-direction: column;
   z-index: 1;
