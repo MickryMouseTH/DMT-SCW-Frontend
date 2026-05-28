@@ -42,7 +42,18 @@ COPY package.json yarn.lock ./
 RUN yarn install --network-timeout 600000
 
 # ---------------------------------------------------------------------------
-# 2) Production build — emits /app/build (and a mirrored /app/dist)
+# 2) Production build — packaged image that runs the webpack build at
+#    container start (NOT at image build time). This is intentional:
+#
+#    BuildKit gives `docker build` steps a memory ceiling that is much
+#    lower than a running container's. Bundling react-scripts inside the
+#    image build OOM-kills (ResourceExhausted) before the final emit on
+#    typical Docker Desktop allocations. Running the build inside a
+#    container (`docker compose run --rm frontend-build`) uses the full
+#    host-side memory and reliably completes.
+#
+#    The compose service overrides CMD to also copy the bundle into the
+#    bind-mounted /artifacts/{build,dist} so the host gets the result.
 # ---------------------------------------------------------------------------
 FROM ${NODE_IMAGE} AS build
 WORKDIR /app
@@ -59,10 +70,9 @@ ENV NODE_OPTIONS=--max_old_space_size=4096
 ENV CI=true
 ENV GENERATE_SOURCEMAP=false
 
-# Invoke react-scripts directly (bypassing the package.json `build` script's
-# hard-coded --max_old_space_size=6144 which exceeds typical Docker Desktop
-# VM RAM and triggers a host-level OOM kill during webpack emit).
-RUN node ./node_modules/@craco/craco/bin/craco.js build && cp -r build dist
+# Default to running the build directly into ./build + ./dist; compose
+# overrides this to also fan out into the host-mounted /artifacts dirs.
+CMD ["sh", "-c", "node ./node_modules/@craco/craco/bin/craco.js build && cp -r build dist"]
 
 # ---------------------------------------------------------------------------
 # 3) Test runner — one-shot Jest with coverage
@@ -102,7 +112,11 @@ EXPOSE 3000
 CMD ["yarn", "start"]
 
 # ---------------------------------------------------------------------------
-# 5) Production runtime — nginx serving /usr/share/nginx/html
+# 5) Production runtime — nginx serving /usr/share/nginx/html.
+#
+#    The host's ./build is bind-mounted in by docker-compose at runtime
+#    (see `frontend-serve` service in docker-compose.yaml). Run `make
+#    build` first to populate ./build, then `make serve`.
 # ---------------------------------------------------------------------------
 FROM ${NGINX_IMAGE} AS serve
 
@@ -111,8 +125,6 @@ RUN apk add --no-cache curl
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
 COPY docker/healthcheck.sh /usr/local/bin/healthcheck.sh
 RUN chmod +x /usr/local/bin/healthcheck.sh
-
-COPY --from=build /app/build /usr/share/nginx/html
 
 EXPOSE 80
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \

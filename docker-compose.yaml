@@ -103,7 +103,12 @@ services:
       <<: *common-env
       CI: "true"
       GENERATE_SOURCEMAP: "false"
-    command: ["sh", "-c", "yarn build && cp -r build/. /artifacts/build/ && cp -r build/. /artifacts/dist/"]
+    # Invoke craco directly so NODE_OPTIONS (4096 MB heap) wins over the
+    # 6144 MB hard-coded inside package.json's `build` script.
+    command:
+      - "sh"
+      - "-c"
+      - "rm -rf build dist && node ./node_modules/@craco/craco/bin/craco.js build && cp -r build/. /artifacts/build/ && cp -r build/. /artifacts/dist/"
     volumes:
       - ./src:/app/src
       - ./public:/app/public
@@ -137,5 +142,6 @@ services:
       timeout: 5s
       start_period: 5s
       retries: 3
-    depends_on:
-      - frontend-build
+    # Intentionally no `depends_on: frontend-build`. Run `make build` first
+    # to populate ./build, then `make serve` — that keeps `make serve` fast
+    # and avoids triggering the heavy build image whenever you boot nginx.

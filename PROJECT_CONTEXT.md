@@ -222,13 +222,13 @@ the browser renders dropdown chrome / picker UI in the correct theme.
 
 Five stages — `node:14-buster-slim` for build, `nginx:1.25-alpine` for runtime:
 
-| Stage   | Purpose                                    | Output                       |
-| ------- | ------------------------------------------ | ---------------------------- |
-| `deps`  | `yarn install` → `/app/node_modules`       | Cached layer for other stages |
-| `build` | CRACO production build                     | `/app/build` + `/app/dist`   |
-| `test`  | One-shot Jest with `--coverage`            | `/app/coverage`              |
-| `dev`   | `yarn start` (CRACO dev server)            | Hot-reload on :3000          |
-| `serve` | nginx serving `/usr/share/nginx/html`      | Production runtime container |
+| Stage   | Purpose                                              | Output                       |
+| ------- | ---------------------------------------------------- | ---------------------------- |
+| `deps`  | `yarn install` → `/app/node_modules`                 | Cached layer for other stages |
+| `build` | Packaged image; runs `craco build` at container time | `./build` + `./dist` on host |
+| `test`  | One-shot Jest with `--coverage`                      | `./coverage` on host         |
+| `dev`   | `yarn start` (CRACO dev server)                      | Hot-reload on :3000          |
+| `serve` | nginx serving `/usr/share/nginx/html`                | Production runtime container |
 
 **Base image rationale.** The stack is pinned to `node:14-buster-slim`
 because `react-scripts@3.4.1` plus `node-sass@4.14` only ship prebuilt
