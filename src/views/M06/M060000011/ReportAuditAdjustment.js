@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { Typography, Table, Button, Modal, Row, Col } from "antd";
 import Skeleton from "../../../components/loading/Loading"
 
+import FullscreenImageModal from "../../../components/imagePreview/FullscreenImageModal";
 import moment from "moment";
 import FormDefault from "../../../components/form/FormDefault/FormDefault";
 import { GET_DATA_INFO_M060000011 } from "../../../service/api/report";
@@ -44,6 +45,7 @@ const SupervisorAdjustment = (props) => {
   const [previewImg, setPreviewImg] = useState([])
   const [visibleVdo, setVisibleVdo] = useState(false);
   const [previewVdo, setPreviewVdo] = useState([])
+  const [fullscreenImg, setFullscreenImg] = useState(null);
   // ----- Fields search ------ //
 
   const fields = [
@@ -694,7 +696,7 @@ const SupervisorAdjustment = (props) => {
   }
 
   const previewImageNewPage = (url) => {
-    window.open(url, '_blank', 'width=800,height=600', 'resizable=true');
+    setFullscreenImg(url);
   }
 
   const addIndex = (res) => {
@@ -929,7 +931,12 @@ const SupervisorAdjustment = (props) => {
         </Modal>
 
       </div>
-    </Skeleton>
+            {/* v1.5.13 — fullscreen image popup (replaces window.open) */}
+        <FullscreenImageModal
+          src={fullscreenImg}
+          onClose={() => setFullscreenImg(null)}
+        />
+      </Skeleton>
   );
 };
 

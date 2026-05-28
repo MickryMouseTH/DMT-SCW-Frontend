@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Typography, Table, Button, Modal, Row, Col, Form, Select, Input } from "antd";
 import Skeleton from "../../../components/loading/Loading"
+import FullscreenImageModal from "../../../components/imagePreview/FullscreenImageModal";
 import { getTSBList_API, getShiftList_API, getVehicleTypeList_API, getSecurityMenuActionAPI } from "../../../service/api/util";
 import moment from "moment";
 import FormDefault from "../../../components/form/FormDefault/FormDefault";
@@ -41,6 +42,7 @@ const ReportAuditMtc = (props) => {
   const [previewImg, setPreviewImg] = useState([]);
   const [visible, setVisible] = useState(false);
   const [previewVdo, setPreviewVdo] = useState([]);
+  const [fullscreenImg, setFullscreenImg] = useState(null);
   const [visibleVdo, setVisibleVdo] = useState(false);
   const [visiblePopup, setVisiblePopup] = useState(false);
   const [selectRecord, setSelectRecord] = useState(null);
@@ -821,7 +823,7 @@ const ReportAuditMtc = (props) => {
   }
 
   const previewImageNewPage = (url) => {
-    window.open(url, '_blank', 'width=800,height=600', 'resizable=true');
+    setFullscreenImg(url);
   }
 
   const handleChangeIdToName = (DataList) => {
@@ -1217,7 +1219,12 @@ const ReportAuditMtc = (props) => {
         </Modal>
 
       </div>
-    </Skeleton>
+            {/* v1.5.13 — fullscreen image popup (replaces window.open) */}
+        <FullscreenImageModal
+          src={fullscreenImg}
+          onClose={() => setFullscreenImg(null)}
+        />
+      </Skeleton>
   );
 };
 

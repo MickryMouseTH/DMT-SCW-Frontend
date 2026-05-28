@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { Typography, Table, Button, Modal, Row, Col, Pagination, Input, Form } from "antd";
 import Skeleton from "../../../components/loading/Loading"
 
+import FullscreenImageModal from "../../../components/imagePreview/FullscreenImageModal";
 import moment from "moment";
 import FormDefault from "../../../components/form/FormDefault/FormDefault";
 import { GET_DATA_INFO_M080000018_Page_Search, GET_DATA_INFO_M080000018_SEND_CS, GET_DATA_INFO_M080000018_CHANGE_SIGNAL_CODE } from "../../../service/api/report";
@@ -29,6 +30,7 @@ const PassingTransactions = (props) => {
   const [previewImg, setPreviewImg] = useState([])
   const [visibleVdo, setVisibleVdo] = useState(false);
   const [previewVdo, setPreviewVdo] = useState([])
+  const [fullscreenImg, setFullscreenImg] = useState(null);
   const [visibleSendCs, setVisibleSendCs] = useState(false);
   const [visibleChangeSignalCode, setVisibleChangeSignalCode] = useState(false);
   const [selectRecord, setSelectRecord] = useState(null);
@@ -474,7 +476,7 @@ const PassingTransactions = (props) => {
   }
 
   const previewImageNewPage = (url) => {
-    window.open(url, '_blank', 'width=800,height=600', 'resizable=true');
+    setFullscreenImg(url);
   }
 
   const handleOnFinish = (value) => {
@@ -896,6 +898,12 @@ const PassingTransactions = (props) => {
 
           </Form>
         </Modal>
+
+        {/* v1.5.13 — fullscreen image popup (replaces window.open) */}
+        <FullscreenImageModal
+          src={fullscreenImg}
+          onClose={() => setFullscreenImg(null)}
+        />
       </div>
     </Skeleton >
   );

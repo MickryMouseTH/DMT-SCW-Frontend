@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { Typography, Table, Button, Modal, Row, Col } from "antd";
 import Skeleton from "../../../components/loading/Loading"
 
+import FullscreenImageModal from "../../../components/imagePreview/FullscreenImageModal";
 import moment from "moment";
 import FormDefault from "../../../components/form/FormDefault";
 import { GET_DATA_INFO_M060000016E, GET_DATA_INFO_M060000016E_getPaymentmethodListAPI } from "../../../service/api/report";
@@ -35,6 +36,7 @@ const ReportTrafficDiffBank = (props) => {
   const [previewImg, setPreviewImg] = useState([])
   const [visibleVdo, setVisibleVdo] = useState(false);
   const [previewVdo, setPreviewVdo] = useState([])
+  const [fullscreenImg, setFullscreenImg] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
   const fields = [
@@ -433,7 +435,7 @@ const ReportTrafficDiffBank = (props) => {
   }
 
   const previewImageNewPage = (url) => {
-    window.open(url, '_blank', 'width=800,height=600', 'resizable=true');
+    setFullscreenImg(url);
   }
 
   const handleChangeIdToName = (DataList) => {
@@ -612,7 +614,12 @@ const ReportTrafficDiffBank = (props) => {
           </Row>
         </Modal>
       </div>
-    </Skeleton>
+            {/* v1.5.13 — fullscreen image popup (replaces window.open) */}
+        <FullscreenImageModal
+          src={fullscreenImg}
+          onClose={() => setFullscreenImg(null)}
+        />
+      </Skeleton>
   );
 };
 

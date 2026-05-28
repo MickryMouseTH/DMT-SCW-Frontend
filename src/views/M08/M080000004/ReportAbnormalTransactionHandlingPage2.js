@@ -15,6 +15,7 @@ import {
   Col
 } from "antd";
 import Skeleton from "../../../components/loading/Loading"
+import FullscreenImageModal from "../../../components/imagePreview/FullscreenImageModal";
 import FormDefault from "../../../components/form/FormDefault/FormDefault";
 import {
   GET_DATA_INFO_M080000004_Search_Next_Previous,
@@ -45,6 +46,7 @@ const ReportAbnormalTransactionHandlingPage2 = (props) => {
   const [visibleVdo, setVisibleVdo] = useState(false);
   const [previewVdo, setPreviewVdo] = useState([])
 
+  const [fullscreenImg, setFullscreenImg] = useState(null);
   const [PagintaionSize, setPaginationSize] = useState({
     pageNumber: 1,
     pageSize: 10
@@ -491,7 +493,7 @@ const ReportAbnormalTransactionHandlingPage2 = (props) => {
   }
 
   const previewImageNewPage = (url) => {
-    window.open(url, '_blank', 'width=800,height=600', 'resizable=true');
+    setFullscreenImg(url);
   }
 
   const printReportRef = useRef();
@@ -697,7 +699,12 @@ const ReportAbnormalTransactionHandlingPage2 = (props) => {
       </Modal>
 
 
-    </Skeleton>
+            {/* v1.5.13 — fullscreen image popup (replaces window.open) */}
+        <FullscreenImageModal
+          src={fullscreenImg}
+          onClose={() => setFullscreenImg(null)}
+        />
+      </Skeleton>
   );
 };
 

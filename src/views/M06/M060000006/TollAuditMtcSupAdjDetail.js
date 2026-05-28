@@ -17,6 +17,7 @@ import {
 } from "antd";
 import Skeleton from "../../../components/loading/Loading"
 
+import FullscreenImageModal from "../../../components/imagePreview/FullscreenImageModal";
 import {
   GET_DATA_TOLL_AUDIT_MTC_SUB_ADJ_DETAIL_M060000006,
   POST_SUB_ADJUST_DETAIL_SAVE_M060000006,
@@ -40,6 +41,7 @@ const TollAuditMtcSupAdjustDetail = (props) => {
   const [previewVdo, 
     // setPreviewVdo
   ] = useState("");
+  const [fullscreenImg, setFullscreenImg] = useState(null);
   const [visiblePopup, setVisiblePopup] = useState(false);
   const [vehicleTypeList, setVehicleTypeList] = useState([]);
   const [selectRecord, setSelectRecord] = useState(null);
@@ -470,7 +472,7 @@ const TollAuditMtcSupAdjustDetail = (props) => {
   };
 
   const previewImageNewPage = (url) => {
-    window.open(url, '_blank', 'width=800,height=600', 'resizable=true');
+    setFullscreenImg(url);
   }
 
   const handleOnCheckFinish = () => {
@@ -761,7 +763,12 @@ const TollAuditMtcSupAdjustDetail = (props) => {
           </Row>
         </Form>
       </Modal>
-    </Skeleton>
+            {/* v1.5.13 — fullscreen image popup (replaces window.open) */}
+        <FullscreenImageModal
+          src={fullscreenImg}
+          onClose={() => setFullscreenImg(null)}
+        />
+      </Skeleton>
   );
 };
 

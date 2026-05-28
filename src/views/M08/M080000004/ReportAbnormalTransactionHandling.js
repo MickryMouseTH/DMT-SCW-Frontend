@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { Typography, Table, Modal, Row, Col, Pagination } from "antd";
 import Skeleton from "../../../components/loading/Loading"
 
+import FullscreenImageModal from "../../../components/imagePreview/FullscreenImageModal";
 import moment from "moment";
 import FormDefault from "../../../components/form/FormDefault";
 import { GET_DATA_INFO_M080000004_Page_Search, GET_DATA_INFO_M080000004 } from "../../../service/api/report";
@@ -36,6 +37,7 @@ const ReportAbnormalTransactionHandling = (props) => {
   const [visibleVdo, setVisibleVdo] = useState(false);
   const [previewVdo, setPreviewVdo] = useState([])
 
+  const [fullscreenImg, setFullscreenImg] = useState(null);
   const [PagintaionSize, setPaginationSize] = useState({
     pageNumber: 1,
     pageSize: 10
@@ -466,7 +468,7 @@ const ReportAbnormalTransactionHandling = (props) => {
   }
 
   const previewImageNewPage = (url) => {
-    window.open(url, '_blank', 'width=800,height=600', 'resizable=true');
+    setFullscreenImg(url);
   }
 
   const handleChangeIdToName = (DataList) => {
@@ -734,7 +736,12 @@ const ReportAbnormalTransactionHandling = (props) => {
           </Row>
         </Modal>
       </div>
-    </Skeleton>
+            {/* v1.5.13 — fullscreen image popup (replaces window.open) */}
+        <FullscreenImageModal
+          src={fullscreenImg}
+          onClose={() => setFullscreenImg(null)}
+        />
+      </Skeleton>
   );
 };
 

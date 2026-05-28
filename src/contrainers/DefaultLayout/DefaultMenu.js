@@ -54,7 +54,7 @@ const DefaultMenu = ({ lng }) => {
       </div>
       <Logout />
       <div className="version-footer shadow-sm d-flex align-items-end text-center">
-        Version 1.5.12 (2026-05-28)
+        Version 1.5.13 (2026-05-28)
       </div>
     </div>
   );

@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { Typography, Table,  Button, Modal, Row, Col } from "antd";
 import Skeleton from "../../../components/loading/Loading"
 
+import FullscreenImageModal from "../../../components/imagePreview/FullscreenImageModal";
 import moment from "moment";
 import FormDefault from "../../../components/form/FormDefault/FormDefault";
 import { GET_DATA_INFO_M050000003 } from "../../../service/api/report";
@@ -39,6 +40,7 @@ const PassingTransactions = (props) => {
   const [visibleVdo, setVisibleVdo] = useState(false);
   const [previewVdo, setPreviewVdo] = useState([]);
 
+  const [fullscreenImg, setFullscreenImg] = useState(null);
   const fields = [
     {
       type: "select",
@@ -550,7 +552,7 @@ const PassingTransactions = (props) => {
   }
 
   const previewImageNewPage = (url) => {
-    window.open(url, '_blank', 'width=800,height=600', 'resizable=true');
+    setFullscreenImg(url);
   }
 
   const handleChangeIdToName = (DataList) => {
@@ -730,7 +732,12 @@ const PassingTransactions = (props) => {
         </Modal>
 
       </div>
-    </Skeleton>
+            {/* v1.5.13 — fullscreen image popup (replaces window.open) */}
+        <FullscreenImageModal
+          src={fullscreenImg}
+          onClose={() => setFullscreenImg(null)}
+        />
+      </Skeleton>
   );
 };
 
