@@ -178,3 +178,143 @@
 .accordion-menu__children--l3.is-open {
   max-height: 60em;
 }
+
+// ---------------------------------------------------------------------------
+// HORIZONTAL layout (v1.5.5)
+// L1 items are laid out left-to-right across the full TopHeader. Opening
+// an L1 reveals its L2/L3 in an absolutely-positioned dropdown panel
+// below — that inner panel reuses the vertical L2/L3 markup, just inside
+// a different container.
+// ---------------------------------------------------------------------------
+
+.accordion-menu--horizontal {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  width: 100%;
+  background: transparent;
+}
+
+.accordion-menu__l1-row {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex: 1 1 auto;
+  width: 100%;
+  align-items: stretch;
+  background: var(--color-bg-surface);
+}
+
+// Each L1 item in the row stretches to share the available width equally
+.accordion-menu--horizontal .accordion-menu__item--l1 {
+  flex: 1 1 0;
+  min-width: 0;
+  border-top: 0;
+  border-right: 1px solid var(--color-divider);
+}
+.accordion-menu--horizontal .accordion-menu__item--l1:last-child {
+  border-right: 0;
+}
+
+// Horizontal L1 button — re-set padding/border so it doesn't carry the
+// vertical-layout look. Chevron sits to the right and rotates downward.
+.accordion-menu--horizontal .accordion-menu__row--l1 {
+  height: 48px;
+  padding: 0 14px;
+  border-top: 0;
+  background: transparent;
+  color: var(--color-brand);
+  font-weight: 600;
+  justify-content: center;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &:hover {
+    background-color: var(--color-bg-hover);
+    color: var(--color-brand);
+  }
+}
+
+.accordion-menu--horizontal .accordion-menu__item--l1.is-active > .accordion-menu__row--l1,
+.accordion-menu--horizontal .accordion-menu__item--l1.is-open > .accordion-menu__row--l1 {
+  background-color: var(--color-brand);
+  color: var(--color-text-on-brand);
+
+  .accordion-menu__chevron {
+    color: var(--color-text-on-brand);
+  }
+}
+
+// Down-chevron in horizontal mode (uses DownOutlined which already points
+// down at rest — invert the "is-open" rotation to flip it back up).
+.accordion-menu--horizontal .accordion-menu__chevron {
+  margin-left: 6px;
+  font-size: 10px;
+
+  &.is-open {
+    transform: rotate(180deg);
+  }
+}
+
+// L1 dropdown panel — appears under the L1 row, full-width, scrollable.
+.accordion-menu__dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  background-color: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-divider);
+  box-shadow: 0 8px 16px var(--color-shadow-md);
+  z-index: 1001;
+  animation: accordion-menu-dropdown-in 0.18s ease;
+}
+
+.accordion-menu__dropdown-list {
+  list-style: none;
+  margin: 0;
+  padding: 8px 0;
+  // Inside the dropdown the existing vertical L2/L3 markup renders as-is,
+  // so we don't need to redefine its styles here. Just reset the indents
+  // a step (the dropdown itself acts as the container).
+}
+
+// Slightly tighten L2/L3 padding inside the dropdown so a long list fits
+// comfortably on screen.
+.accordion-menu__dropdown .accordion-menu__row--l2 {
+  padding-left: 24px;
+}
+.accordion-menu__dropdown .accordion-menu__row--l3 {
+  padding-left: 44px;
+}
+
+@keyframes accordion-menu-dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive: on small screens, hide chevron text-truncation and let
+// labels wrap to keep buttons tap-able.
+@media (max-width: 768px) {
+  .accordion-menu--horizontal .accordion-menu__row--l1 {
+    padding: 0 8px;
+    font-size: 0.75rem;
+    white-space: normal;
+    line-height: 1.15;
+    overflow: visible;
+  }
+  .accordion-menu--horizontal .accordion-menu__chevron {
+    display: none;
+  }
+}

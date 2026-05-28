@@ -1,8 +1,9 @@
 # DMT SCW Frontend — Project Context
 
-> **Program Version: 1.5.4** — 3-level click-to-expand accordion
-> sidebar menu (single-open per level, keyboard accessible, data-driven
-> from `src/data/menu_tree_semantic.json`)
+> **Program Version: 1.5.5** — Full-width horizontal Level 1 menu bar
+> in a new TopHeader, with the page Mode (theme) selector anchored to
+> the top-right corner. L2/L3 accordion behaviour preserved (single-open
+> per level) in a dropdown panel below the active L1.
 
 This document is the primary source of truth for the project. Read it before
 making any change.
@@ -97,11 +98,13 @@ dmt-scw-frontend/
     ├── components/               ← Reusable UI (button, chart, form, table…)
     ├── data/
     │   └── menu_tree_semantic.json   ← (v1.5.4) 3-level sidebar menu source
-    ├── contrainers/DefaultLayout/← Authenticated app shell (sidebar+content)
-    │   ├── DefaultLayout.js
-    │   ├── DefaultMenu.js           ← sidebar shell (logo/user/toggle/logout)
-    │   ├── AccordionMenu.js         ← (v1.5.4) 3-level accordion menu
-    │   ├── accordion-menu.scss      ← (v1.5.4) accordion styles
+    ├── contrainers/DefaultLayout/← Authenticated app shell (top header + sidebar + content)
+    │   ├── DefaultLayout.js         ← composes TopHeader + sidebar + content
+    │   ├── TopHeader.js             ← (v1.5.5) full-viewport header
+    │   ├── top-header.scss          ← (v1.5.5) header styles
+    │   ├── DefaultMenu.js           ← sidebar shell (logo / staff / logout / version)
+    │   ├── AccordionMenu.js         ← (v1.5.4) 3-level accordion, vertical+horizontal layouts
+    │   ├── accordion-menu.scss      ← (v1.5.4) accordion styles + (v1.5.5) horizontal layout
     │   ├── menuTree.js              ← (v1.5.4) JSON→tree adapter + active path
     │   ├── HeadTitle.js
     │   └── Logout.js
@@ -122,12 +125,29 @@ dmt-scw-frontend/
 (`DefaultMenu`) and a content area rendering one of `route/Main.js`'s
 module-keyed children based on user permissions.
 
-### 4.5 Sidebar Menu (v1.5.4 — 3-level accordion)
+### 4.5 Navigation (v1.5.4 — 3-level accordion · v1.5.5 — top-bar layout)
 
-The sidebar is the `<AccordionMenu>` component
-(`src/contrainers/DefaultLayout/AccordionMenu.js`) rendered inside the
-existing `<DefaultMenu>` shell. It replaces the legacy 2-level dropdown
-with a 3-level click-to-expand tree.
+Since v1.5.5 the menu lives in a **TopHeader** (`TopHeader.js`) that
+spans 100% of the viewport, with the Mode/theme selector pinned to the
+top-right corner. The classic sidebar (`DefaultMenu.js`) is still there
+but now hosts only the brand, staff info, logout button and version
+footer.
+
+The actual menu rendering still goes through `AccordionMenu.js`, which
+in v1.5.5 grew a `layout` prop:
+
+- `layout="vertical"` (default) — the legacy sidebar accordion.
+- `layout="horizontal"` — used by TopHeader: L1 buttons laid out
+  left-to-right across the bar; clicking an L1 opens a dropdown panel
+  beneath the header that contains the existing L2/L3 vertical
+  accordion markup. Single-open-per-level state, ARIA attributes,
+  keyboard handlers and semantic-token styling are shared between the
+  two layouts. The dropdown closes on outside click / Escape / leaf
+  navigation.
+
+On viewports under 768 px the TopHeader wraps so the actions row sits
+above the menu row and L1 labels shrink to keep buttons tap-able. The
+sidebar is hidden by the existing `<MobileView>` guard.
 
 **Data source.** `src/data/menu_tree_semantic.json` defines the tree:
 
@@ -487,3 +507,4 @@ finish. See the **Memory requirement** call-out in §6.1.
 | 1.5.2   | 2026-05-28 | Dark Mode total audit — global defensive overrides catch inline `color: 'black'` / `rgba(0,0,0,*)` / `gray` / hardcoded white backgrounds across all 500+ legacy spots; stronger antd Card body / Typography / link semantics in dark mode. |
 | 1.5.3   | 2026-05-28 | Force-dark `html/body/#root` bg with !important (a stale cache or antd's compiled body rule was still showing white). Full DatePicker/TimePicker re-skin — input text, suffix/separator/clear icons, popup container, header strip, weekday row, date/month/year/decade cells, today/selected/disabled/range, time-panel columns + cells, footer "Now" link, range active bar/arrow. Sidebar version footer corrected. |
 | 1.5.4   | 2026-05-28 | 3-level click-to-expand accordion sidebar. New `src/data/menu_tree_semantic.json` (G01..G08 → G0xxx → M0xxxxxxx) drives rendering; legacy `_navbar.js` only supplies leaf routes. `AccordionMenu` + `menuTree` adapter + dedicated SCSS. Single-open per level, ARIA tree semantics, smooth expand/collapse, theme-aware via existing tokens. Existing routing / permissions / HeadTitle untouched. |
+| 1.5.5   | 2026-05-28 | New `TopHeader` component sits above the sidebar+content row, spans 100vw, hosts the Level 1 menu horizontally (full width) and the Mode (theme) selector pinned top-right. `AccordionMenu` extended with `layout="horizontal"` — L2/L3 expand in an absolutely-positioned dropdown panel beneath the active L1, reusing the existing vertical accordion markup so behaviour/ARIA/styling are shared. Sidebar slimmed to logo + staff info + logout + version. Dropdown closes on outside click / Escape / leaf navigation. Responsive wrap at 768 px. |

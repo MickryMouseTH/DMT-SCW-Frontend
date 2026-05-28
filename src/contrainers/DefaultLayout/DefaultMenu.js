@@ -1,11 +1,17 @@
-import React, { useEffect, useMemo, useState } from "react";
+// ---------------------------------------------------------------------------
+// DefaultMenu (sidebar shell)
+//
+// v1.5.5 — slimmed down: the L1/L2/L3 accordion and the page Mode (theme)
+// selector have moved to <TopHeader> (full-viewport-width). The sidebar
+// now hosts only the brand + staff info + logout + version footer.
+// ---------------------------------------------------------------------------
+
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { userLogout } from "../../redux/actions/authAction";
 import Logout from "./Logout";
-import ThemeToggle from "../../theme/ThemeToggle";
-import AccordionMenu from "./AccordionMenu";
 
-const DefaultMenu = ({ lng }) => {
+const DefaultMenu = (/* lng intentionally unused after v1.5.5 split */) => {
   const [userData, setUserData] = useState({});
 
   useEffect(() => {
@@ -13,13 +19,9 @@ const DefaultMenu = ({ lng }) => {
       const stored = JSON.parse(localStorage.getItem("user_data"));
       if (stored) setUserData(stored);
     } catch (_e) {
-      // ignore corrupt user_data — falls back to empty menu
+      // ignore corrupt user_data — falls back to empty sidebar
     }
   }, []);
-
-  // The accordion is fed by the user's permission whitelist (pms). Empty
-  // pms falls through to "show everything" which is helpful in dev.
-  const pms = useMemo(() => (userData && userData.pms) || [], [userData]);
 
   return (
     <div className="sidebar-body">
@@ -34,16 +36,12 @@ const DefaultMenu = ({ lng }) => {
         {`${userData.staffNameTh ? userData.staffNameTh : ""}`}
       </div>
 
-      <div className="sidebar-menu-scroll">
-        <AccordionMenu lng={lng} pms={pms} />
-      </div>
+      {/* Spacer pushes the footer to the bottom of the sidebar */}
+      <div className="sidebar-menu-scroll" aria-hidden />
 
-      <div className="sidebar-theme-toggle-wrap d-flex justify-content-center">
-        <ThemeToggle compact />
-      </div>
       <Logout />
       <div className="version-footer shadow-sm d-flex align-items-end text-center">
-        Version 1.5.4 (2026-05-28)
+        Version 1.5.5 (2026-05-28)
       </div>
     </div>
   );
