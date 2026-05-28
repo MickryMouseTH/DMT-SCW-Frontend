@@ -1,9 +1,11 @@
 # DMT SCW Frontend — Project Context
 
-> **Program Version: 1.5.8** — L1 menu items now truly distribute
-> across the sidebar's empty vertical space (fixed v1.5.6's broken
-> flex chain). New synthetic **Dashboard** entry sits at the top of
-> the L1 list as a direct-link tile.
+> **Program Version: 1.5.9** — Root cause of the still-not-filling
+> menu: legacy sidebar children (`.user-data`, `.sidebar-footer`,
+> `.version-footer`) all carried `flex-grow: 1` from before the
+> accordion existed; they were competing with `.sidebar-menu-scroll`
+> for vertical space. Pinned them to natural height so the menu owns
+> all the leftover space and the L1 items truly distribute.
 
 This document is the primary source of truth for the project. Read it before
 making any change.
@@ -518,3 +520,4 @@ finish. See the **Memory requirement** call-out in §6.1.
 | 1.5.6   | 2026-05-28 | Restore the Level 1 menu back to the LEFT sidebar (vertical accordion). Misread "full width" in v1.5.5 — user wanted the menu to fill the sidebar's empty vertical space, not move to the top. `TopHeader` slimmed to a 44 px bar with only the Mode (theme) selector at the top-right. Sidebar `AccordionMenu` uses flex column + `flex: 1 1 auto` on closed L1 items so they spread to fill the column; an open L1 collapses to natural height so its L2/L3 can render. `layout="horizontal"` still supported in `AccordionMenu` but not currently mounted. |
 | 1.5.7   | 2026-05-28 | Per user request: Mode (theme) selector moved back into the sidebar directly above the Logout button. `TopHeader` removed entirely (`TopHeader.js` + `top-header.scss` deleted). Combined with the v1.5.6 flex-grow rules, the AccordionMenu now extends from below the staff info all the way down to just above the Mode toggle — no more empty space in the sidebar. |
 | 1.5.8   | 2026-05-28 | The v1.5.6 flex chain was broken — `.sidebar-menu-scroll` sized to content so the menu inside couldn't distribute. Made the scroll wrapper a flex column too; menu now uses `flex: 1 1 auto`; L1 items get `flex: 1 1 0` and `min-height: 48px` so closed L1s evenly divide the leftover vertical space (the "yellow box"). Added a synthetic **Dashboard** entry at the top of the L1 list (no children → rendered as a direct `<Link to="/dashboard">`); `AccordionMenu` learned to render L1-leaves without a chevron/expand state; `menuTree.findActivePath` now also matches L1-leaves so the Dashboard highlights when active. |
+| 1.5.9   | 2026-05-28 | The v1.5.8 fix still didn't take visually because legacy `.user-data` / `.sidebar-footer` / `.version-footer` carried `flex-grow: 1` from before the accordion existed — they were splitting leftover height with `.sidebar-menu-scroll` so the menu only got a fraction. Pinned all three to `flex: 0 0 auto` (natural height) so the menu scroll wrapper owns the full leftover height and the L1 flex distribution actually fires. |

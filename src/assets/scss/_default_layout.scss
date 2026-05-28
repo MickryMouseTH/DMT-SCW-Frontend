@@ -31,29 +31,33 @@
   background-color: var(--color-bg-surface);
 }
 
+// v1.5.9 — These elements previously used `flex-grow: 1` to share the
+// sidebar's vertical space. With the accordion menu introduced in
+// v1.5.4 the menu (.sidebar-menu-scroll) is the ONLY child that should
+// flex-grow, otherwise it competes with these footers/info rows and
+// the L1 items inside can't distribute properly. Pinning them to
+// natural height (flex: 0 0 auto) lets the menu take the leftover
+// vertical space cleanly.
 .sidebar-footer {
-  height: 100%;
+  flex: 0 0 auto;
   background-color: var(--color-bg-surface);
-  flex-grow: 1;
-  bottom: 0;
 }
 
 .version-footer {
-  height: 10%;
+  flex: 0 0 auto;
   background-color: var(--color-bg-surface);
-  flex-grow: 1;
   padding: 3px 0 5px 20px;
   font-size: small;
   color: var(--color-brand);
 }
 
 .user-data {
-  height: 10%;
+  flex: 0 0 auto;
   background-color: var(--color-bg-surface);
-  flex-grow: 1;
   padding: 3px 0 5px 20px;
   font-size: 0.8rem;
   color: var(--color-brand);
+  min-height: 28px;
 }
 
 .sidebar-li {
