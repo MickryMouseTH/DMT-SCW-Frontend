@@ -1,0 +1,97 @@
+@import "tokens";
+@import "theme_size";
+@import "theme_color";
+
+@import "variables";
+
+@import "custom_antd";
+@import "custom_color";
+@import "custom_style";
+@import "default_layout";
+@import "cutom_layout_style";
+@import "dark_mode";
+
+@font-face {
+  font-family: "Kanit";
+  src: url("../fonts/kanit/Kanit-Regular.eot");
+  src: url("../fonts/kanit/Kanit-Regular.eot?#iefix")
+      format("embedded-opentype"),
+    url("../fonts/kanit/Kanit-Regular.woff2") format("woff2"),
+    url("../fonts/kanit/Kanit-Regular.woff") format("woff"),
+    url("../fonts/kanit/Kanit-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Kanit-Medium";
+  src: url("../fonts/kanit/Kanit-Medium.eot");
+  src: url("../fonts/kanit/Kanit-Medium.eot?#iefix") format("embedded-opentype"),
+    url("../fonts/kanit/Kanit-Medium.woff2") format("woff2"),
+    url("../fonts/kanit/Kanit-Medium.woff") format("woff"),
+    url("../fonts/kanit/Kanit-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+body {
+  height: auto !important;
+  min-height: 100vh !important;
+
+  margin: 0;
+  font-family: "Kanit", "Kanit-Medium", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-bg-app);
+  color: var(--color-text-primary);
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+#root {
+  height: 100%;
+  min-height: 100vh;
+}
+
+@media all {
+  .page-break {
+    display: none;
+  }
+}
+
+@media print {
+  html,
+  body {
+    height: initial !important;
+    // overflow: initial !important; //show second page if content only have 1 page
+    overflow: hidden !important; //show content only have 1 page
+    -webkit-print-color-adjust: exact;
+  }
+}
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin:10mm 7mm;
+    // margin:10mm 7mm 7mm 7mm; //top right bottom left
+  }
+  .page-break {
+    // margin: 8mm 0;
+    display: block;
+    // page-break-before: always; //origin use old year
+    // margin: 25px;
+    page-break-after: always; //new use this its active in filefox
+    // page-break-inside: avoid !important;
+  }
+  th:first-child {
+    padding: 0 !important;
+  }
+  .ant-table-summary {
+    display: none !important;
+  }
+}
+
+

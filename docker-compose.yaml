@@ -1,0 +1,141 @@
+# =============================================================================
+# DMT SCW Frontend — docker-compose
+#
+# Services:
+#   frontend-dev    : hot-reload CRACO dev server on :3000
+#   frontend-test   : one-shot Jest test runner (writes ./coverage to host)
+#   frontend-build  : one-shot production build (writes ./build + ./dist to host)
+#   frontend-serve  : nginx serving ./build on :5000 (production-like runtime)
+#
+# Volumes mapped to host so artifacts survive container removal:
+#   ./build, ./dist, ./coverage, ./logs
+# =============================================================================
+
+x-common-env: &common-env
+  CHOKIDAR_USEPOLLING: "true"
+  WDS_SOCKET_HOST: "0.0.0.0"
+  NODE_OPTIONS: "--max_old_space_size=6144"
+
+networks:
+  dmt-scw-net:
+    driver: bridge
+
+volumes:
+  frontend_node_modules:
+  frontend_yarn_cache:
+
+services:
+  # ---------------------------------------------------------------------------
+  # Dev — hot-reload server on http://localhost:3000
+  # ---------------------------------------------------------------------------
+  frontend-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    image: dmt-scw-frontend:dev
+    container_name: scw-frontend-dev
+    env_file:
+      - .env
+    environment:
+      <<: *common-env
+      PORT: "3000"
+      BROWSER: "none"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./craco.config.js:/app/craco.config.js
+      - ./package.json:/app/package.json
+      - ./yarn.lock:/app/yarn.lock
+      - ./logs:/app/logs
+      - frontend_node_modules:/app/node_modules
+      - frontend_yarn_cache:/usr/local/share/.cache/yarn
+    networks:
+      - dmt-scw-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000 >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
+    stdin_open: true
+    tty: true
+
+  # ---------------------------------------------------------------------------
+  # Test — one-shot Jest run with coverage exported to ./coverage
+  # ---------------------------------------------------------------------------
+  frontend-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: test
+    image: dmt-scw-frontend:test
+    container_name: scw-frontend-test
+    env_file:
+      - .env
+    environment:
+      <<: *common-env
+      CI: "true"
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./coverage:/app/coverage
+      - ./logs:/app/logs
+      - frontend_node_modules:/app/node_modules
+    networks:
+      - dmt-scw-net
+
+  # ---------------------------------------------------------------------------
+  # Build — one-shot production build → ./build + ./dist on the host
+  # ---------------------------------------------------------------------------
+  frontend-build:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: build
+    image: dmt-scw-frontend:build
+    container_name: scw-frontend-build
+    env_file:
+      - .env
+    environment:
+      <<: *common-env
+      CI: "true"
+      GENERATE_SOURCEMAP: "false"
+    command: ["sh", "-c", "yarn build && cp -r build/. /artifacts/build/ && cp -r build/. /artifacts/dist/"]
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./craco.config.js:/app/craco.config.js
+      - ./package.json:/app/package.json
+      - ./yarn.lock:/app/yarn.lock
+      - ./build:/artifacts/build
+      - ./dist:/artifacts/dist
+      - ./logs:/app/logs
+      - frontend_node_modules:/app/node_modules
+    networks:
+      - dmt-scw-net
+
+  # ---------------------------------------------------------------------------
+  # Serve — production runtime (nginx) on http://localhost:5000
+  # ---------------------------------------------------------------------------
+  frontend-serve:
+    image: nginx:1.25-alpine
+    container_name: scw-frontend-serve
+    ports:
+      - "5000:80"
+    volumes:
+      - ./build:/usr/share/nginx/html:ro
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./logs:/var/log/nginx
+    networks:
+      - dmt-scw-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/healthz >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      start_period: 5s
+      retries: 3
+    depends_on:
+      - frontend-build

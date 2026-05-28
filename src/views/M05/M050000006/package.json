@@ -1,0 +1,6 @@
+{
+  "name": "CheckBalanceEtc",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./CheckBalanceEtc.js"
+}

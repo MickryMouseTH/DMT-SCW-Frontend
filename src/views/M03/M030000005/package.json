@@ -1,0 +1,6 @@
+{
+  "name": "ListOfJobs",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./ListOfJobs.js"
+}

@@ -1,0 +1,201 @@
+export const mockdata = {
+    list: [
+        {
+            index: 1,
+            tsbAbbreviation: "DD",
+            staffNo: "555555",
+            bagNo: "92",
+            revenueType: "Revenue",
+            amountFromShipping: 33260.0,
+            amountFromSystem: 33260.0,
+            amountDiff: 9991110.0,
+            remarkShipping: "-",
+            remarkSystem: "555555555"
+        },
+        {
+            index: 1,
+            tsbAbbreviation: "DD",
+            staffNo: "",
+            bagNo: "92",
+            revenueType: "Revenue",
+            amountFromShipping: 33260.0,
+            amountFromSystem: 33260.0,
+            amountDiff: 9991110.0,
+            remarkShipping: "-",
+            remarkSystem: ""
+        },
+        {
+            index: 1,
+            tsbAbbreviation: "DD",
+            staffNo: "",
+            bagNo: "92",
+            revenueType: "Revenue",
+            amountFromShipping: 33260.0,
+            amountFromSystem: 33260.0,
+            amountDiff: 9991110.0,
+            remarkShipping: "-",
+            remarkSystem: ""
+        },
+        {
+            index: 1,
+            tsbAbbreviation: "DD",
+            staffNo: "",
+            bagNo: "92",
+            revenueType: "Revenue",
+            amountFromShipping: 33260.0,
+            amountFromSystem: 33260.0,
+            amountDiff: 9991110.0,
+            remarkShipping: "-",
+            remarkSystem: ""
+        },
+        {
+            index: 1,
+            tsbAbbreviation: "DD",
+            staffNo: "",
+            bagNo: "92",
+            revenueType: "Revenue",
+            amountFromShipping: 33260.0,
+            amountFromSystem: 33260.0,
+            amountDiff: 9991110.0,
+            remarkShipping: "-",
+            remarkSystem: ""
+        },
+        {
+            index: 1,
+            tsbAbbreviation: "DD",
+            staffNo: "",
+            bagNo: "92",
+            revenueType: "Revenue",
+            amountFromShipping: 33260.0,
+            amountFromSystem: 33260.0,
+            amountDiff: 9991110.0,
+            remarkShipping: "-",
+            remarkSystem: ""
+        },
+        {
+            index: 1,
+            tsbAbbreviation: "DD",
+            staffNo: "",
+            bagNo: "92",
+            revenueType: "Revenue",
+            amountFromShipping: 33260.0,
+            amountFromSystem: 33260.0,
+            amountDiff: 9991110.0,
+            remarkShipping: "-",
+            remarkSystem: ""
+        },
+        {
+            index: 1,
+            tsbAbbreviation: "DD",
+            staffNo: "",
+            bagNo: "92",
+            revenueType: "Revenue",
+            amountFromShipping: 33260.0,
+            amountFromSystem: 33260.0,
+            amountDiff: 9991110.0,
+            remarkShipping: "-",
+            remarkSystem: ""
+        },
+        {
+            index: 1,
+            tsbAbbreviation: "DD",
+            staffNo: "",
+            bagNo: "92",
+            revenueType: "Revenue",
+            amountFromShipping: 33260.0,
+            amountFromSystem: 33260.0,
+            amountDiff: 9991110.0,
+            remarkShipping: "-",
+            remarkSystem: ""
+        },
+        {
+            index: 1,
+            tsbAbbreviation: "DD",
+            staffNo: "",
+            bagNo: "92",
+            revenueType: "Revenue",
+            amountFromShipping: 33260.0,
+            amountFromSystem: 33260.0,
+            amountDiff: 9991110.0,
+            remarkShipping: "-",
+            remarkSystem: ""
+        },
+        {
+            index: 1,
+            tsbAbbreviation: "DD",
+            staffNo: "",
+            bagNo: "92",
+            revenueType: "Revenue",
+            amountFromShipping: 33260.0,
+            amountFromSystem: 33260.0,
+            amountDiff: 9991110.0,
+            remarkShipping: "-",
+            remarkSystem: ""
+        },
+        {
+            index: 1,
+            tsbAbbreviation: "DD",
+            staffNo: "",
+            bagNo: "92",
+            revenueType: "Revenue",
+            amountFromShipping: 33260.0,
+            amountFromSystem: 33260.0,
+            amountDiff: 9991110.0,
+            remarkShipping: "-",
+            remarkSystem: ""
+        },
+        {
+            index: 1,
+            tsbAbbreviation: "DD",
+            staffNo: "",
+            bagNo: "92",
+            revenueType: "Revenue",
+            amountFromShipping: 33260.0,
+            amountFromSystem: 33260.0,
+            amountDiff: 9991110.0,
+            remarkShipping: "-",
+            remarkSystem: ""
+        },
+        {
+            index: 1,
+            tsbAbbreviation: "DD",
+            staffNo: "",
+            bagNo: "92",
+            revenueType: "Revenue",
+            amountFromShipping: 33260.0,
+            amountFromSystem: 33260.0,
+            amountDiff: 9991110.0,
+            remarkShipping: "-",
+            remarkSystem: ""
+        },
+        {
+            index: 1,
+            tsbAbbreviation: "DD",
+            staffNo: "555555",
+            bagNo: "92",
+            revenueType: "Revenue",
+            amountFromShipping: 33260.0,
+            amountFromSystem: 33260.0,
+            amountDiff: 9991110.0,
+            remarkShipping: "-",
+            remarkSystem: "999999"
+        },
+        {
+            index: 1,
+            tsbAbbreviation: "DD",
+            staffNo: "",
+            bagNo: "92",
+            revenueType: "Revenue",
+            amountFromShipping: 33260.0,
+            amountFromSystem: 33260.0,
+            amountDiff: 9991110.0,
+            remarkShipping: "-",
+            remarkSystem: ""
+        },
+
+    ],
+    status: {
+        code: "S200",
+        message: "Success"
+    }
+}

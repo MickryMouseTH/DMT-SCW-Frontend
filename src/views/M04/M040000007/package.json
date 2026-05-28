@@ -1,0 +1,6 @@
+{
+  "name": "YearlyAverageTrafficRevenue",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./YearlyAverageTrafficRevenue.js"
+}

@@ -1,0 +1,11 @@
+
+.mainWrapper {
+    width: 500px;
+    height: 200px;
+}
+
+.subHeader {
+    font-weight: 100;
+    font-size: 15px;
+    text-align: center;
+}

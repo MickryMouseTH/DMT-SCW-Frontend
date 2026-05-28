@@ -1,0 +1,6 @@
+{
+  "name": "MonthlyTrafficAndIncome",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./MonthlyTrafficAndIncome.js"
+}

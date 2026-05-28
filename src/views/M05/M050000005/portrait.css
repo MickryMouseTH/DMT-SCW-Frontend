@@ -1,0 +1,22 @@
+@media print {
+    @page {   
+      margin-left: 10mm;
+      margin-right: 10mm;
+      margin-top: 0mm;
+      margin-bottom: 0mm;
+      size: auto;
+    } 
+      body {
+        padding-top: 10mm;
+        padding-bottom: 10mm;
+      }
+}
+
+.font-10{
+    font-size: 12px !important;
+  }
+
+.font-headTable{
+    font-size: 13px !important;
+    font-weight: 600;
+}

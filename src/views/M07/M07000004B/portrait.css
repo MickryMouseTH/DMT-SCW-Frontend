@@ -1,0 +1,19 @@
+@media print {
+    @page {   
+      margin: 1mm;
+      size: auto;
+    } 
+}
+
+.font-5{
+    font-size: 5px !important;
+}
+
+.font-12{
+    font-size: 12px !important;
+}
+
+.font-headTable{
+    font-size: 13px !important;
+    font-weight: 600;
+}

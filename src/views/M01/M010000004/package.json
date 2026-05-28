@@ -1,0 +1,6 @@
+{
+  "name": "LaneAlarmStatisticsReports",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./LaneAlarmStatisticsReports.js"
+}

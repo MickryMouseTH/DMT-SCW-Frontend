@@ -1,0 +1,6 @@
+{
+  "name": "MonthlyExemptTraffic",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./MonthlyExemptTraffic.js"
+}

@@ -1,0 +1,11 @@
+// Brand-coloured text helpers
+.trific_color {
+  color: var(--color-brand);
+}
+.revenue_color {
+  color: var(--color-success);
+}
+
+.bg_default {
+  background-color: var(--color-bg-muted) !important;
+}

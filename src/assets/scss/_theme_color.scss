@@ -1,0 +1,20 @@
+// ---------------------------------------------------------------------------
+// Legacy SCSS color aliases.
+//
+// Historically these were hardcoded hex values used throughout the app
+// (`background-color: $primary_color`, etc). In v1.5.0 they have been
+// re-pointed to CSS custom properties from `_tokens.scss`. This means
+// references like `color: $primary_color;` continue to compile, but the
+// resulting value is theme-aware at runtime.
+//
+// Prefer using `var(--color-*)` directly in new code.
+// ---------------------------------------------------------------------------
+
+$primary_color: var(--color-brand);
+$muted_color: var(--color-text-muted);
+$muted_color_opc: var(--color-divider);
+
+$default_bg_color: var(--color-bg-app);
+
+$violet_Traffic: var(--color-info);
+$success_revenue: var(--color-success);

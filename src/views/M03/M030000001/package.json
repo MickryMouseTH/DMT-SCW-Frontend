@@ -1,0 +1,6 @@
+{
+  "name": "SupervisorAdjustment",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./SupervisorAdjustment.js"
+}

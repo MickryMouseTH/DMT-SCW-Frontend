@@ -1,0 +1,96 @@
+// Text alignment
+
+.text-left {
+  text-align: left !important;
+}
+.text-center {
+  text-align: center !important;
+}
+.text-right {
+  text-align: right !important;
+}
+
+// Text wrapping and overflow
+.text-wrap {
+  white-space: normal !important;
+}
+.text-nowrap {
+  white-space: nowrap !important;
+}
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+// Word break
+.text-break {
+  word-wrap: break-word !important;
+}
+
+// Text transform
+.text-lowercase {
+  text-transform: lowercase !important;
+}
+.text-uppercase {
+  text-transform: uppercase !important;
+}
+.text-capitalize {
+  text-transform: capitalize !important;
+}
+
+// Theme-aware color helpers
+.text-muted {
+  color: var(--color-text-muted) !important;
+}
+.text-white {
+  color: var(--color-text-on-brand) !important;
+}
+.text-primary {
+  color: var(--color-brand) !important;
+}
+.text-red {
+  color: var(--color-error) !important;
+}
+.text-blue {
+  color: var(--color-info) !important;
+}
+.text-green {
+  color: var(--color-success) !important;
+}
+.text-fuchsia {
+  color: var(--color-brand) !important;
+}
+
+// Text decoration
+.text-decoration-none {
+  text-decoration: none !important;
+}
+
+//Text size
+
+.text-20 {
+  font-size: 20px;
+}
+.text-30 {
+  font-size: 30px;
+}
+.text-40 {
+  font-size: 40px;
+}
+.text-50 {
+  font-size: 50px;
+}
+
+//font-weight
+.font-weight-600 {
+  font-weight: 600 !important;
+}
+.font-weight-700 {
+  font-weight: 600 !important;
+}
+.font-weight-800 {
+  font-weight: 600 !important;
+}
+.font-weight-bold {
+  font-weight: bold !important;
+}

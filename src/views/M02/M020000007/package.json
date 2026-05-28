@@ -1,0 +1,6 @@
+{
+  "name": "DailyTrafficAndIncome",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./DailyTrafficAndIncome.js"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ManageMenu",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./ManageMenu.js"
+}

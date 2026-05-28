@@ -1,0 +1,6 @@
+{
+  "name": "DailyExemptTraffic",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./DailyExemptTraffic.js"
+}

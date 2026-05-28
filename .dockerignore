@@ -1,0 +1,15 @@
+.git
+.gitignore
+.DS_Store
+node_modules
+build
+dist
+coverage
+logs
+*.log
+.env.local
+.env.*.local
+.idea
+.vscode
+report.*.json
+README.md

@@ -1,0 +1,6 @@
+{
+  "name": "DailyViolationReports",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./DailyViolationReports.js"
+}

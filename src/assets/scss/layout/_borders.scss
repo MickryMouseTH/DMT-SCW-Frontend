@@ -1,0 +1,36 @@
+// Border-radius
+.rounded-circle {
+  border-radius: 50% !important;
+}
+.rounded-pill {
+  border-radius: 50rem !important;
+}
+
+.radius10 {
+  border-radius: 10px;
+}
+.radius10tl {
+  // border-radius: 10px 0px 0px 0px;
+  border-top-left-radius: 10px;
+}
+.radius10tr {
+  // border-radius: 0px 10px 0px 0px;
+  border-top-right-radius: 10px;
+}
+.radius10br {
+  // border-radius: 0px 0px 10px 0px;
+  border-bottom-right-radius: 10px;
+}
+.radius10bl {
+  // border-radius: 0px 0px 0px 10px;
+  border-bottom-left-radius: 10px;
+}
+.radius10blr {
+  // border-radius: 0px 0px 10px 10px;
+  border-bottom-right-radius: 10px;
+}
+.radius10btr {
+  // border-radius: 0px 10px 10px 0px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}

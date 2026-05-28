@@ -1,0 +1,6 @@
+{
+  "name": "YearlyTrafficAndIncome",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./YearlyTrafficAndIncome.js"
+}

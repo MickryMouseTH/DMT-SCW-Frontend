@@ -1,0 +1,83 @@
+{
+  "sideMenu": {
+    "M00": {
+      "name": "Dashboard",
+      "subMenu": {
+        "M010000001": "Dashboard"
+      }
+    },
+    "M01": {
+      "name": "Statistical Report",
+      "subMenu": {
+        "M010000001": "Lane Operating Statistics Reports",
+        "M010000002": "Lane Alarm Statistics Reports"
+      }
+    },
+    "M02": {
+      "name": "Financial Report",
+      "subMenu": {
+        "M020000001": "Daily Average Traffic and Income",
+        "M020000002": "Workingday Daily Average Traffic and Income",
+        "M020000003": "Satureday-Sunday Daily Average Traffic and Income",
+        "M020000004": "Holiday Daily Average Traffic and Income",
+        "M020000005": "Minutes Traffic",
+        "M020000006": "Hourly Traffic",
+        "M020000007": "Daily Traffic and Income",
+        "M020000008": "Monthly Traffic and Income",
+        "M020000009": "Yearly Traffic and Income",
+        "M020000010": "Daily Exempt Traffic",
+        "M020000011": "Monthly Exempt Traffic"
+      }
+    },
+    "M03": {
+      "name": "Operation Of Checkpoint",
+      "subMenu": {
+        "M030000001": "Supervisor Adjustment",
+        "M030000002": "Daily Violation Reports",
+        "M030000003": "Violation Summary Reports",
+        "M030000004": "Passing Transactions",
+        "M030000005": "List of Jobs",
+        "M030000006": "TOD Reports"
+      }
+    },
+    "M04": {
+      "name": "Report Of Checkpoint / Audit Department",
+      "subMenu": {
+        "M040000001": "Hourly Traffic/Revenue",
+        "M040000002": "Daily Traffic/Revenue",
+        "M040000003": "Monthly Traffice/Revenue",
+        "M040000004": "Hourly Average Traffic/Revenue",
+        "M040000005": "Daily Average Traffic/Revenue",
+        "M040000006": "Monthly Average Traffic/Revenue",
+        "M040000007": "Yearly Average Traffic/Revenue"
+      }
+    },
+    "M05": {
+      "name": "Maintenance Report",
+      "subMenu": {
+        "M050000001": "Alarm",
+        "M050000002": "Maintenance Login Reports",
+        "M050000003": "Maintenance Passing Transaction",
+        "M050000004": "Maintenance List of Jobs",
+        "M050000005": "Maintenance TOD Reports"
+      }
+    },
+    "M09": {
+      "name": "More",
+      "subMenu": {
+        "M090000001": "Holiday for General",
+        "M090000002": "Holiday for Tariff Table",
+        "M090000003": "Tariff Table",
+        "M090000004": "Manage Users",
+        "M090000005": "Manage Users Group"
+      }
+    },
+    "M10": {
+      "name": "Manage Users",
+      "subMenu": {
+        "M100000001": "Manage Users",
+        "M100000002": "Manage Users Group"
+      }
+    }
+  }
+}

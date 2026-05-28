@@ -1,0 +1,6 @@
+{
+  "name": "PassingTransactions",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./PassingTransactions.js"
+}

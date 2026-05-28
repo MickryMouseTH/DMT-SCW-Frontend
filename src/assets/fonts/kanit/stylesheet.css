@@ -1,0 +1,22 @@
+@font-face {
+    font-family: 'Kanit';
+    src: url('Kanit-Regular.eot');
+    src: url('Kanit-Regular.eot?#iefix') format('embedded-opentype'),
+        url('Kanit-Regular.woff2') format('woff2'),
+        url('Kanit-Regular.woff') format('woff'),
+        url('Kanit-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Kanit';
+    src: url('Kanit-Medium.eot');
+    src: url('Kanit-Medium.eot?#iefix') format('embedded-opentype'),
+        url('Kanit-Medium.woff2') format('woff2'),
+        url('Kanit-Medium.woff') format('woff'),
+        url('Kanit-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+

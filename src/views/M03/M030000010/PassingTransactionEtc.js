@@ -1,0 +1,548 @@
+import React, { useState, useRef, useEffect } from "react";
+import { connect } from "react-redux";
+import Swal from "sweetalert2";
+import { useReactToPrint } from "react-to-print";
+import PrintReport from "./PrintReport";
+import moment from "moment";
+import {
+  _exportFileExcel,
+  _timeZoneThai,
+  _isEmpty,
+  _isNull,
+  _setYearThai,
+} from "../../../tools/util";
+import { Table } from "antd";
+import Skeleton from "../../../components/loading/Loading"
+
+import { GET_DATA_INFO_M030000010 } from "../../../service/api/report";
+import { getPlazaListAPI } from "../../../service/api/util";
+import FormDefault from "../../../components/form/FormDefault/FormDefault";
+// import PrintPDF from "./PrintPDF";
+
+const dateFormat = "DD/MM/YYYY HH:mm:ss";
+
+const PassingTransactionEmvQr = (props) => {
+  const [loading, setLoading] = useState(false);
+  const [dataSource, setDataSource] = useState({ list: [] });
+  const [initialValue, setInitialValue] = useState({});
+  const [
+    //   scroll
+    , setScroll] = useState({});
+  const [plazaList, setPlazaList] = useState([]);
+  const [typeList, setTypeList] = useState([]);
+  const [dataToPrint, setDataToPrint] = useState({});
+
+
+  useEffect(() => {
+    getPlazaList();
+    setTypeList(["M-Pass", "Easy-Pass"]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const columnsOne = [
+    {
+      title: <b>ลำดับที่</b>,
+      key: "no",
+      dataIndex: "no",
+      align: 'center',
+      width: 60,
+      render: (value, row, index) => {
+        const obj = {
+          children: row.no === "Total" ? <div style={{ textAlign: "center", color: 'black', fontWeight: 'bold' }}>{_isNull(value)}</div>
+            : <div style={{ textAlign: "center" }}>{_isNull(value)}</div>,
+          props: {}
+        };
+        if (row.no === "Total") { obj.props.colSpan = 1; obj.props.rowSpan = 1; }
+        else { obj.props.colSpan = 1; obj.props.rowSpan = 1; }
+        return obj;
+      }
+    },
+    {
+      title: <b>ด่าน</b>,
+      key: "plazaAbbreviation",
+      dataIndex: "plazaAbbreviation",
+      align: 'center',
+      width: 60,
+      render: (value, row, index) => {
+        const obj = {
+          children: row.plazaAbbreviation === "Total" ? <div style={{ textAlign: "center", color: 'black', fontWeight: 'bold' }}>{_isNull(value)}</div>
+            : <div style={{ textAlign: "center" }}>{_isNull(value)}</div>,
+          props: {}
+        };
+        if (row.plazaAbbreviation === "Total") { obj.props.colSpan = 4; obj.props.rowSpan = 1; }
+        else { obj.props.colSpan = 1; obj.props.rowSpan = 1; }
+        return obj;
+      }
+    },
+    {
+      title: <b>ช่องทาง</b>,
+      key: "laneAbbreviation",
+      dataIndex: "laneAbbreviation",
+      align: 'center',
+      width: 60,
+      render: (value, row, index) => {
+        const obj = {
+          children: row.plazaAbbreviation === "Total" ? <div style={{ textAlign: "center", color: 'black', fontWeight: 'bold' }}>{_isNull(value)}</div>
+            : <div style={{ textAlign: "center" }}>{_isNull(value)}</div>,
+          props: {}
+        };
+        if (row.laneAbbreviation === '0xNull') { obj.props.colSpan = 0; obj.props.rowSpan = 1; }
+        else { obj.props.colSpan = 1; obj.props.rowSpan = 1; }
+        return obj;
+      }
+    },
+    {
+      title: <b>Ntrx</b>,
+      key: "ntrxNo",
+      dataIndex: "ntrxNo",
+      align: 'center',
+      width: 60,
+      render: (value, row, index) => {
+        const obj = {
+          children: row.plazaAbbreviation === "Total" ? <div style={{ textAlign: "center", color: 'black', fontWeight: 'bold' }}>{_isNull(value)}</div>
+            : <div style={{ textAlign: "center" }}>{_isNull(value)}</div>,
+          props: {}
+        };
+        if (row.ntrxNo === '0xNull') { obj.props.colSpan = 0; obj.props.rowSpan = 1; }
+        else { obj.props.colSpan = 1; obj.props.rowSpan = 1; }
+        return obj;
+      }
+    },
+    {
+      title: <b>วันที่ผ่านทาง</b>,
+      key: "trxDate",
+      dataIndex: "trxDate",
+      align: 'center',
+      width: 100,
+      render: (value, row, index) => {
+        const obj = {
+          children: row.plazaAbbreviation === "Total" ? <div style={{ textAlign: "center", color: 'black', fontWeight: 'bold' }}>{_isNull(value)}</div>
+            : <div style={{ textAlign: "center" }}>{_isNull(value)}</div>,
+          props: {}
+        };
+        if (row.trxDate === '') { obj.props.colSpan = 1; obj.props.rowSpan = 1; }
+        else { obj.props.colSpan = 1; obj.props.rowSpan = 1; }
+        return obj;
+      }
+    },
+    {
+      title: <b>วันที่ตัดเงิน</b>,
+      key: "resDate",
+      dataIndex: "resDate",
+      align: 'center',
+      width: 100,
+      render: (value, row, index) => {
+        const obj = {
+          children: row.plazaAbbreviation === "Total" ? <div style={{ textAlign: "center", color: 'black', fontWeight: 'bold' }}>{_isNull(value)}</div>
+            : <div style={{ textAlign: "center" }}>{_isNull(value)}</div>,
+          props: {}
+        };
+        if (row.resDate === '') { obj.props.colSpan = 1; obj.props.rowSpan = 1; }
+        else { obj.props.colSpan = 1; obj.props.rowSpan = 1; }
+        return obj;
+      }
+    },
+    {
+      title: <b>ค่าผ่านทาง</b>,
+      key: "amount",
+      dataIndex: "amount",
+      align: 'center',
+      width: 60,
+      render: (value, row, index) => {
+        const obj = {
+          children: row.plazaAbbreviation === "Total" ? <div style={{ textAlign: "center", color: 'black', fontWeight: 'bold' }}>{_isNull(value)}</div>
+            : <div style={{ textAlign: "center" }}>{_isNull(value)}</div>,
+          props: {}
+        };
+        if (row.amount === '') { obj.props.colSpan = 0; obj.props.rowSpan = 1; }
+        else { obj.props.colSpan = 1; obj.props.rowSpan = 1; }
+        return obj;
+      }
+    },
+  ];
+
+  const columnsRows = [
+    'totalRows',
+  ]
+
+  const columnsTotalAmount = [
+    'totalAmount',
+  ]
+
+  const fields = [
+    {
+      type: "select",
+      option: {
+        name: "paymentType",
+        label: "ประเภทการชำระ",
+        childrenProps: {
+          placeholder: "ประเภทการชำระ",
+          optionValue: {
+            values: ["ทั้งหมด", ...typeList],
+            keyValue: "paymentType",
+          },
+        },
+        rules: [
+          {
+            required: false,
+            message: "กรุณาเลือกประเภทการชำระ!",
+          },
+        ],
+        initialValue: initialValue.paymentType ? initialValue.paymentType : "ทั้งหมด",
+      },
+    },
+    {
+      type: "input",
+      option: {
+        name: "pan",
+        label: "หมายเลขบัตร (PAN)",
+        childrenProps: { placeholder: "ป้อนหมายเลข (PAN)...", maxLength: "" },
+        rules: [
+          {
+            required: false,
+            message: "กรุณาป้อนหมายเลข (PAN)!"
+          }
+        ],
+        initialValue: initialValue.pan,
+      },
+    },
+    {
+      type: "datePicker",
+      option: {
+        name: "startDate",
+        label: "จากวันที่ : ",
+        childrenProps: {
+          format: dateFormat,
+          placeholder: "เลือกวันที่...",
+          showTime: true
+        },
+        rules: [{ required: true, message: "กรุณาเลือกวันที่เปิดดำเนินการ!" }],
+        initialValue: _isEmpty(initialValue) ? moment("00:00:00", "HH:mm:ss") : initialValue.startDate,
+      },
+    },
+    {
+      type: "datePicker",
+      option: {
+        name: "endDate",
+        label: "ถึงวันที่ :",
+        childrenProps: {
+          format: dateFormat,
+          placeholder: "เลือกวันที่...",
+          showTime: true
+        },
+        rules: [{ required: true, message: "กรุณาเลือกวันที่เปิดดำเนินการ!" }],
+        initialValue: _isEmpty(initialValue) ? moment("23:59:59", "HH:mm:ss") : initialValue.endDate,
+      },
+    },
+    {
+      type: "select",
+      option: {
+        name: "plazaId",
+        label: "ด่าน",
+        childrenProps: {
+          placeholder: "เลือกด่าน...",
+          optionValue: {
+            values: ["ทั้งหมด", ...plazaList],
+            keyName: "plazaNameTh",
+            keyValue: "plazaId",
+          },
+        },
+        rules: [
+          {
+            required: false,
+            message: "กรุณาเลือกด่าน!",
+          },
+        ],
+        initialValue: initialValue.plazaId ? initialValue.plazaId : "ทั้งหมด",
+      },
+    },
+    {
+      type: "input",
+      option: {
+        name: "laneId",
+        label: "หมายเลขช่องทาง",
+        childrenProps: { placeholder: "ป้อนหมายเลขช่องทาง..." },
+        rules: [
+          {
+            required: false,
+            message: "กรุณาป้อนหมายเลขช่องทาง!"
+          }
+        ],
+        initialValue: initialValue.laneId,
+      },
+    },
+  ];
+
+  const header310 = [
+    { name: "ลำดับที่", key: "no", type: "nullColumn", align: 'center', className: 'text-center' },
+    { name: "ด่าน", key: "laneAbbreviation", type: "nullColumn", align: 'center', className: 'text-center' },
+    { name: "ช่องทาง", key: "plazaAbbreviation", type: "nullColumn", align: 'center', className: 'text-center' },
+    { name: "Ntrx", key: "ntrxNo", type: "nullColumn", align: 'center', className: 'text-center' },
+    { name: "วันเวลาผ่านทาง", key: "trxDate", type: "nullColumn", align: 'center', className: 'text-center' },
+    { name: "วันที่ตัดเงิน", key: "resDate", type: "nullColumn", align: 'right', className: 'text-center' },
+    { name: "ค่าผ่านทาง", key: "amount", type: "nullColumn", align: 'center', className: 'text-center' },
+  ]
+
+  const tableSummaryRowRender = (listRender = [], cellIndex = 1) => {
+    return listRender.map((title, index) =>
+      <Table.Summary.Cell key={index + cellIndex}>
+        <div key={index + cellIndex} style={{ textAlign: "center", fontWeight: "bold" }}>{_isNull(dataSource[title])}</div>
+      </Table.Summary.Cell>
+    )
+  }
+
+  const handlePrintFile = () => {
+    handlePrint();
+  };
+
+  const printReportRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => printReportRef.current,
+    documentTitle: ["3.10 รายการผ่านทาง M-Pass / Easy-Pass"],
+  });
+
+  const action = [
+    {
+      name: "พิมพ์",
+      props: {
+        type: "primary",
+        ghost: false,
+        onClick: handlePrintFile,
+      },
+    },
+    {
+      name: "ส่งออก",
+      props: {
+        type: "primary",
+        onClick: () => {
+          _exportFileExcel({
+            dataSource: { list: dataSource.listExport },
+            fileName: "3.10 รายการผ่านทาง M-Pass / Easy-Pass",
+            header: header310,
+          });
+        },
+      },
+    },
+  ];
+
+  const getPlazaList = async () => {
+    setScroll({ x: 1500, y: 600 });
+    try {
+      setLoading(true);
+      const res = await getPlazaListAPI(null, props.auth.token);
+      if (res.status.code === "S200") {
+        console.log("plazalist", res);
+        setLoading(false);
+        setPlazaList(res.list);
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Failed to fetch. ",
+          text: res.status.message,
+        }).then(async (result) => {
+          if (result.value) {
+            setLoading(false);
+          }
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const addIndex = (res) => {
+
+    const totalAll = {
+      no: 'Total',
+      plazaAbbreviation: res.totalRows,
+      laneAbbreviation: 'rows',
+      ntrxNo: '',
+      trxDate: '',
+      resDate: 'ยอดรวม',
+      amount: res.totalAmount,
+    }
+
+
+    return {
+      ...res,
+      list: [...res.list],
+      listExport: [...res.list, totalAll]
+    }
+  }
+
+  const getDataDailyTollCollction = async (dataOutput) => {
+    try {
+      setLoading(true);
+      const res = await GET_DATA_INFO_M030000010(dataOutput, props.auth.token);
+      console.log("res 3.10", res);
+      if (res.status.code === "S200") {
+        setLoading(false);
+        setDataSource(addIndex(res));
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Failed to fetch. ",
+          text: res.status.message,
+        }).then(async (result) => {
+          if (result.value) {
+            setLoading(false);
+          }
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleChangeIdToName = (DataList) => {
+    const plaza = plazaList.find((e) => e.plazaId === DataList.plazaId);
+    setDataToPrint({
+      DataList,
+      plazaName: plaza ? plaza.plazaNameTh : "ทั้งหมด",
+    });
+    console.log(dataSource)
+  };
+
+  const handleOnFinish = (value) => {
+    handleChangeIdToName(value);
+    setInitialValue(value);
+
+    const start = moment(value.startDate)
+    const end = moment(value.endDate)
+    const duration = moment.duration(end.diff(start));
+    const days = duration.asDays();
+    if (days <= 31) {
+      const dataOutput = {
+        paymentType: value.paymentType === "ทั้งหมด" ? null : value.paymentType === "M-Pass" ? 6 : 5,
+        pan: value.pan,
+        startDate: _timeZoneThai(value.startDate),
+        endDate: _timeZoneThai(value.endDate),
+        plazaId: value.plazaId === "ทั้งหมด" ? null : value.plazaId,
+        laneId: _isEmpty(value.laneId) ? null : value.laneId,
+      };
+      getDataDailyTollCollction(dataOutput);
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Failed to fetch. ",
+        text: "Start date and End date out of lenght 31 days",
+      }).then(async (result) => {
+        if (result.value) {
+          setLoading(false);
+        }
+      });
+    }
+  };
+
+  const headerText = [
+    { name: "ด่าน", value: dataToPrint.DataList ? dataToPrint.plazaName : "" },
+    {
+      name: "ช่องทาง",
+      value: dataToPrint.DataList ? dataToPrint.DataList.laneId : "",
+    },
+    {
+      name: "จากวันที่",
+      value: dataToPrint.DataList
+        ? _setYearThai(dataToPrint.DataList.startDate,"DD/MM/YYYY HH:mm:ss")
+        : "",
+    },
+    {
+      name: "ประเภทการชำระ",
+      value: dataToPrint.DataList ? dataToPrint.DataList.paymentType : "",
+    },
+    {
+      name: "ถึงวันที่",
+      value: dataToPrint.DataList
+        ? _setYearThai(dataToPrint.DataList.endDate,"DD/MM/YYYY HH:mm:ss")
+        : "",
+    },
+    {
+      name: "หมายเลขบัตร (PAN)",
+      value: dataToPrint.DataList ? dataToPrint.DataList.pan : "",
+    },
+  ];
+
+  const footer310 = [
+    { key: "Total" },
+    { key: "totalRows" },
+    { key: "rows" },
+    { key: "" },
+    { key: "" },
+    { key: "ยอดรวม" },
+    { key: "totalAmount" },
+  ];
+
+  return (
+    <Skeleton loading={loading} active>
+      <FormDefault
+        fields={fields}
+        buttonWrapper={{ md: 24, lg: 5, xl: 3 }}
+        formWrapper={{ md: 24, lg: 19, xl: 21 }}
+        typeButton="primary"
+        submitText="ค้นหา"
+        onFinish={handleOnFinish}
+        action={action}
+      />
+      <div className={_isEmpty(dataSource.list) ? "mt-10" : "mt-0"}>
+        <Table
+          size="small"
+          rowKey={(row, ind) => ind}
+          columns={columnsOne}
+          bordered
+          dataSource={dataSource.list}
+          summary={() => {
+            return (
+              <>
+                <Table.Summary.Row >
+                  <Table.Summary.Cell colSpan={1}>
+                    <div style={{ textAlign: "center" }}><b>Total</b></div>
+                  </Table.Summary.Cell>
+                  {tableSummaryRowRender(columnsRows)}
+                  <Table.Summary.Cell colSpan={1}>
+                    <div style={{ textAlign: "center" }}><b>rows</b></div>
+                  </Table.Summary.Cell>
+                  <Table.Summary.Cell colSpan={3}>
+                    <div style={{ textAlign: "center" }}><b>ยอดรวม</b></div>
+                  </Table.Summary.Cell>
+                  {tableSummaryRowRender(columnsTotalAmount)}
+                </Table.Summary.Row>
+              </>
+            );
+          }}
+          pagination={{
+            showSizeChanger: _isEmpty(dataSource.list) ? false : true,
+            position: _isEmpty(dataSource.list) ? [] : ["topRight", "bottomRight"],
+          }}
+        />
+      </div>
+      <div className="d-none">
+        <PrintReport
+          ref={printReportRef}
+          dataSource={dataSource}
+          header={header310}
+          columnPerPage={header310.length}
+          rowPerPage={23}
+          footer={footer310}
+          propsHeader={{
+            headerText,
+            position: "d-flex justify-content-start",
+            colSpan: 8,
+            TopicText: "3.10 รายการผ่านทาง M-Pass / Easy-Pass"
+          }}
+        />
+      </div>
+    </Skeleton>
+  );
+};
+
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+});
+
+const mapDispatchToProps = {};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PassingTransactionEmvQr);
+

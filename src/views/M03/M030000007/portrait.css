@@ -1,0 +1,90 @@
+@media print {
+    @page {   
+      margin: 8mm;
+      size: auto;
+    } 
+}
+
+.font-10{
+    font-size: 12px !important;
+  }
+
+.font-headTable{
+    font-size: 13px !important;
+    font-weight: 600;
+}
+
+.wrapper {
+  border-color: rgba(orange, 1);
+  width: 300px;
+  min-height: 250px;
+  position: relative;
+  border: 2px solid;
+  border-left: 40px solid;
+  padding: 15px;
+  color: rgba(black, 0.5);
+  font-size: small;
+  display: inline-block;
+}
+
+  .text-90dgree {
+    font-size: 1rem;
+    color: red;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    top:0;
+    right: 0;
+    text-align: center;
+    /* margin-left: -30px; */
+    transform-origin: 0 0;
+    transform: rotate(90deg);
+  }
+
+  .paperPdf_width{
+    width: 45% !important;
+  }
+
+  .border-line-dot{
+    border-bottom: 1px dotted rebeccapurple;
+    /* width: 100px; */
+    padding: 0 8px;
+    /* margin: 0 8px; */
+    text-align: center;
+  }
+  
+  .border-header-pdf{
+    border: 1px solid;
+    padding: 5px 0;
+  }
+
+  th.ant-table-cell.fontHeader{
+    font-size: 18px;
+    padding: 8px 0 !important;
+  }
+
+.rotateTest{
+    transform: rotate(
+90deg
+) !important;
+    height: 62px;
+  }
+  
+  .w-pdf-100{
+    width: 100% !important;
+  }
+  .ant-card.paperPdf_width.ant-card-bordered{
+    border: 0px solid !important;
+  }
+  .ant-card.w-pdf-100.ant-card-bordered{
+    border: 0px solid !important;
+  }
+
+  .ant-card-body {
+    padding: 0px !important;
+}
+
+ 
