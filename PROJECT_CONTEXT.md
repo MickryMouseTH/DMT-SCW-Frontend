@@ -1,6 +1,7 @@
 # DMT SCW Frontend — Project Context
 
-> **Program Version: 1.5.0** — Dark Mode + Dockerized build environment
+> **Program Version: 1.5.1** — Dark Mode polish (table summary cells,
+> fixed-column backgrounds, brand-color tone-down, image preview overlay)
 
 This document is the primary source of truth for the project. Read it before
 making any change.
@@ -143,7 +144,7 @@ Two CSS variable sets are emitted on `:root`:
 
 | Token                            | Light                      | Dark                       |
 | -------------------------------- | -------------------------- | -------------------------- |
-| `--color-brand`                  | `#91098f`                  | `#c44cc2`                  |
+| `--color-brand`                  | `#91098f`                  | `#b536b3`                  |
 | `--color-brand-contrast`         | `#ffffff`                  | `#ffffff`                  |
 | `--color-bg-app`                 | `#f7f7f7`                  | `#0f1115`                  |
 | `--color-bg-surface`             | `#ffffff`                  | `#1a1d24`                  |
@@ -381,3 +382,4 @@ finish. See the **Memory requirement** call-out in §6.1.
 | ------- | ---------- | ----------------------------------------------------------------------- |
 | 1.4.93  | 2025-11-04 | Last pre-darkmode version (string still rendered in sidebar footer).    |
 | 1.5.0   | 2026-05-28 | Dark Mode + semantic-token design system + dockerized build environment.|
+| 1.5.1   | 2026-05-28 | Dark Mode polish — fix white table-summary cells / fixed columns, tone down dark brand from neon to subdued purple, theme image preview + spin overlays. |

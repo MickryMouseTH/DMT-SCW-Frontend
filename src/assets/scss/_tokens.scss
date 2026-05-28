@@ -74,12 +74,14 @@
 }
 
 :root[data-theme="dark"] {
-  // brand — keep purple identity; brighten 1 step so it pops on dark bg
-  --color-brand: #c44cc2;
-  --color-brand-hover: #d672d4;
-  --color-brand-active: #a13aa0;
+  // brand — keep the original purple identity (#91098f) but lift the
+  // lightness one step so it stays readable on a dark surface without
+  // turning hot-pink/neon.
+  --color-brand: #b536b3;
+  --color-brand-hover: #c459c2;
+  --color-brand-active: #91098f;
   --color-brand-contrast: #ffffff;
-  --color-brand-soft: rgba(196, 76, 194, 0.16);
+  --color-brand-soft: rgba(181, 54, 179, 0.16);
 
   // surface backgrounds
   --color-bg-app: #0f1115;
@@ -88,7 +90,7 @@
   --color-bg-muted: #2a2f3a;
   --color-bg-inverse: #ffffff;
   --color-bg-hover: rgba(255, 255, 255, 0.06);
-  --color-bg-selected: rgba(196, 76, 194, 0.18);
+  --color-bg-selected: rgba(181, 54, 179, 0.18);
   --color-bg-disabled: #262932;
 
   // text

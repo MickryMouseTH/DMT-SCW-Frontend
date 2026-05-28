@@ -144,21 +144,77 @@
     background-color: var(--color-bg-selected) !important;
   }
 
+  // Antd renders Table.Summary as <tfoot class="ant-table-summary"> with
+  // <td class="ant-table-cell"> cells inside — these are NOT matched by
+  // the .ant-table-tbody > tr > td rule above and inherit the antd
+  // light-mode background. Re-skin them explicitly.
   .ant-table-summary,
   .ant-table-footer,
   .ant-table-title {
-    background-color: var(--color-bg-muted);
+    background-color: var(--color-bg-muted) !important;
     color: var(--color-text-primary);
     border-color: var(--color-border) !important;
   }
+  .ant-table-summary > tr > td,
+  .ant-table-summary > tr > th,
+  .ant-table-summary .ant-table-cell {
+    background-color: var(--color-bg-muted) !important;
+    color: var(--color-text-primary) !important;
+    border-color: var(--color-border) !important;
+  }
 
-  .ant-table-placeholder {
-    background: var(--color-bg-surface);
+  // Fixed (sticky) columns get their own white background from antd to
+  // mask scrolling content. Re-skin them with the surface token so
+  // pinned columns blend with the rest of the table in dark mode.
+  .ant-table-cell-fix-left,
+  .ant-table-cell-fix-right {
+    background-color: var(--color-bg-surface) !important;
+  }
+  .ant-table-thead .ant-table-cell-fix-left,
+  .ant-table-thead .ant-table-cell-fix-right {
+    background-color: var(--color-bg-muted) !important;
+  }
+  .ant-table-tbody > tr.ant-table-row:hover > td.ant-table-cell-fix-left,
+  .ant-table-tbody > tr.ant-table-row:hover > td.ant-table-cell-fix-right {
+    background-color: var(--color-bg-hover) !important;
+  }
+
+  // Bordered table cell separators
+  .ant-table-bordered .ant-table-thead > tr > th,
+  .ant-table-bordered .ant-table-tbody > tr > td,
+  .ant-table-bordered .ant-table-summary > tr > td,
+  .ant-table-bordered .ant-table-cell {
+    border-color: var(--color-border-subtle) !important;
+  }
+  .ant-table.ant-table-bordered > .ant-table-container {
+    border-color: var(--color-border-subtle) !important;
+  }
+
+  // Sticky scroll shadow that antd paints as a white gradient — invert it
+  .ant-table-ping-left .ant-table-cell-fix-left-first::after,
+  .ant-table-ping-left .ant-table-cell-fix-left-last::after,
+  .ant-table-ping-right .ant-table-cell-fix-right-first::before,
+  .ant-table-ping-right .ant-table-cell-fix-right-last::before {
+    box-shadow: inset 10px 0 8px -8px var(--color-shadow-md) !important;
+  }
+
+  .ant-table-placeholder,
+  .ant-table-placeholder:hover > td {
+    background: var(--color-bg-surface) !important;
     color: var(--color-text-muted);
   }
 
   .ant-empty-description {
     color: var(--color-text-muted);
+  }
+  .ant-empty-img-simple-ellipse {
+    fill: var(--color-bg-muted) !important;
+  }
+  .ant-empty-img-simple-g {
+    stroke: var(--color-border) !important;
+  }
+  .ant-empty-img-simple-path {
+    fill: var(--color-bg-muted) !important;
   }
 
   .ant-pagination,
@@ -429,6 +485,24 @@
   .ant-popover-arrow-content,
   .ant-tooltip-arrow-content {
     background-color: var(--color-bg-surface-elevated) !important;
+  }
+
+  // Image preview overlay (used by Modal-driven photo previews in M05)
+  .ant-image-preview-wrap,
+  .ant-image-preview-mask {
+    background-color: var(--color-overlay) !important;
+  }
+  .ant-image-preview-operations {
+    background-color: var(--color-bg-surface-elevated) !important;
+    color: var(--color-text-primary) !important;
+  }
+  .ant-image-preview-img-wrapper {
+    background: transparent !important;
+  }
+
+  // Spin (loading) overlay tint
+  .ant-spin-blur::after {
+    background-color: var(--color-bg-surface) !important;
   }
 
   .ant-notification-notice,
