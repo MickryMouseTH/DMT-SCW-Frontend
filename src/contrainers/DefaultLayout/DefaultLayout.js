@@ -6,7 +6,6 @@ import { Row, Col } from "antd";
 
 import DefaultMenu from "./DefaultMenu";
 import HeadTitle from "./HeadTitle";
-import TopHeader from "./TopHeader";
 // import Hidden from "../../components/grid/Hidden";
 import { isLogin, userLogout } from "../../redux/actions/authAction";
 import { BrowserView, MobileView } from "react-device-detect";
@@ -69,11 +68,8 @@ const DefaultLayout = (props) => {
   return (
     <Skeleton loading={loading} active>
       <BrowserView>
-        {/* v1.5.6 — slim full-viewport top header hosts ONLY the page
-            Mode (theme) selector pinned top-right. The main navigation
-            (3-level accordion) lives in the left sidebar — see DefaultMenu. */}
-        <TopHeader />
-
+        {/* v1.5.7 — TopHeader removed; the page Mode (theme) selector
+            lives in the sidebar directly above the Logout button. */}
         <Row justify="center">
           <Col span={4}>
             <DefaultMenu navPms={_navPmsMenu} lng={lng} />
