@@ -1,7 +1,8 @@
 # DMT SCW Frontend — Project Context
 
-> **Program Version: 1.5.1** — Dark Mode polish (table summary cells,
-> fixed-column backgrounds, brand-color tone-down, image preview overlay)
+> **Program Version: 1.5.2** — Global defensive overrides for inline
+> `color`/`background` styles + stronger antd Card / Typography / link
+> dark-mode coverage
 
 This document is the primary source of truth for the project. Read it before
 making any change.
@@ -203,11 +204,38 @@ preference.
 
 Antd 4 ships compiled CSS with hardcoded colors. We re-skin its visible
 surfaces under `[data-theme="dark"]` using semantic tokens — Layout, Card,
-Modal, Drawer, Table (head/body/hover/expanded), Select dropdown, Pagination,
-Input, Picker (date/time), Menu, Tabs, Tooltip/Popover, Notification,
-Message, Skeleton, Steps, Divider, Tag, and SweetAlert2. Brand-coloured
-surfaces (primary buttons, active menu pill) intentionally remain brand-
-coloured in both themes.
+Modal, Drawer, Table (head/body/hover/expanded/summary/fixed-columns),
+Select dropdown, Pagination, Input, Picker (date/time), Menu, Tabs,
+Tooltip/Popover, Notification, Message, Skeleton, Steps, Divider, Tag,
+Alert, Image preview, Spin, and SweetAlert2. Brand-coloured surfaces
+(primary buttons, active menu pill) intentionally remain brand-coloured
+in both themes.
+
+#### Defensive inline-style overrides (v1.5.2)
+
+The legacy view code (M01–M10) uses several thousand inline
+`style={{ color: 'black' | 'gray' | 'rgba(0, 0, 0, 0.45)' | ... }}` and
+`style={{ background: 'white' | '#fff' | '#fafafa' }}` patterns scattered
+across ~500 files. Rewriting each call-site is impractical and would
+churn unrelated code.
+
+Instead, `_dark_mode.scss` carries a block of **global CSS attribute
+selectors** under `[data-theme="dark"]` that match the serialised React
+style attribute and rewrite the bad value to the right semantic token:
+
+| Inline value                              | Rewritten to                |
+| ----------------------------------------- | --------------------------- |
+| `color: black` / `#000` / `rgb(0,0,0)`    | `var(--color-text-primary)` |
+| `color: rgba(0,0,0,.85)` / `.65`          | `var(--color-text-primary)` |
+| `color: rgba(0,0,0,.45)` / `.25`          | `var(--color-text-muted)`   |
+| `color: gray|grey|#333..#999`             | `var(--color-text-muted)`   |
+| `background: white|#fff|rgb(255,...)`     | `var(--color-bg-surface)`   |
+| `background: #fafafa|#f7f7f7`             | `var(--color-bg-muted)`     |
+
+Light mode is unaffected — these selectors only apply when
+`[data-theme="dark"]` is on `<html>`. New code should still avoid
+hardcoded colors; the defensive layer is for legacy reach-back, not a
+license to add more inline color literals.
 
 ### 5.7 Scrollbars & form controls
 
@@ -383,3 +411,4 @@ finish. See the **Memory requirement** call-out in §6.1.
 | 1.4.93  | 2025-11-04 | Last pre-darkmode version (string still rendered in sidebar footer).    |
 | 1.5.0   | 2026-05-28 | Dark Mode + semantic-token design system + dockerized build environment.|
 | 1.5.1   | 2026-05-28 | Dark Mode polish — fix white table-summary cells / fixed columns, tone down dark brand from neon to subdued purple, theme image preview + spin overlays. |
+| 1.5.2   | 2026-05-28 | Dark Mode total audit — global defensive overrides catch inline `color: 'black'` / `rgba(0,0,0,*)` / `gray` / hardcoded white backgrounds across all 500+ legacy spots; stronger antd Card body / Typography / link semantics in dark mode. |

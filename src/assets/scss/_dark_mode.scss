@@ -64,41 +64,104 @@
   }
 
   // -------------------------------------------------------------------------
-  // Typography
+  // Typography. Cover antd Typography children variants too (success /
+  // danger / warning / disabled / secondary) so default heading and body
+  // text reads light on dark.
   // -------------------------------------------------------------------------
   body,
   .ant-typography,
   h1, h2, h3, h4, h5, h6,
-  p, span, label, a {
+  p, span, label, b, strong, i, em {
     color: var(--color-text-primary);
   }
-
+  .ant-typography.ant-typography-secondary,
+  .ant-typography-secondary {
+    color: var(--color-text-secondary) !important;
+  }
+  .ant-typography.ant-typography-disabled,
+  .ant-typography-disabled {
+    color: var(--color-text-disabled) !important;
+  }
+  .ant-typography.ant-typography-success,
+  .ant-typography-success {
+    color: var(--color-success) !important;
+  }
+  .ant-typography.ant-typography-warning,
+  .ant-typography-warning {
+    color: var(--color-warning) !important;
+  }
+  .ant-typography.ant-typography-danger,
+  .ant-typography-danger {
+    color: var(--color-error) !important;
+  }
+  // Keep link semantics: brand color, not body text
+  a, a:link {
+    color: var(--color-brand);
+  }
+  a:hover {
+    color: var(--color-brand-hover);
+  }
+  // Don't recolor white-on-brand utility labels (e.g. .text-white)
+  .text-white {
+    color: var(--color-text-on-brand) !important;
+  }
   .text-muted {
     color: var(--color-text-muted) !important;
+  }
+  .text-primary {
+    color: var(--color-brand) !important;
+  }
+  .text-success {
+    color: var(--color-success) !important;
+  }
+  .text-danger {
+    color: var(--color-error) !important;
+  }
+  .text-warning {
+    color: var(--color-warning) !important;
+  }
+  .text-info {
+    color: var(--color-info) !important;
+  }
+  .text-secondary {
+    color: var(--color-text-secondary) !important;
   }
 
   // -------------------------------------------------------------------------
   // Card / Collapse / Tabs
   // -------------------------------------------------------------------------
   .ant-card,
+  .ant-card-bordered,
+  .ant-card-body,
+  .ant-card-grid,
+  .ant-card-actions,
   .ant-collapse,
   .ant-collapse-content,
   .ant-collapse-item,
   .ant-tabs,
   .ant-tabs-content-holder,
   .ant-tabs-tabpane {
-    background-color: var(--color-bg-surface);
+    background-color: var(--color-bg-surface) !important;
     color: var(--color-text-primary);
-    border-color: var(--color-border);
+    border-color: var(--color-border) !important;
   }
 
   .ant-card-head,
+  .ant-card-head-title,
+  .ant-card-extra,
   .ant-collapse-header,
   .ant-tabs-bar,
   .ant-tabs-nav {
-    background-color: var(--color-bg-surface);
-    color: var(--color-text-primary);
+    background-color: var(--color-bg-surface) !important;
+    color: var(--color-text-primary) !important;
     border-color: var(--color-border) !important;
+  }
+  .ant-card-actions > li {
+    color: var(--color-text-secondary) !important;
+    background: var(--color-bg-surface);
+  }
+  .ant-card-actions > li:not(:last-child) {
+    border-color: var(--color-border-subtle) !important;
   }
 
   .ant-tabs-tab {
@@ -622,19 +685,80 @@
   }
 
   // -------------------------------------------------------------------------
-  // Defensive overrides for inline `style="color: black"` / `color: gray`
-  // present in legacy view files (mostly Grand Total rows in report tables).
-  // CSS attribute selectors match the serialised React style attribute.
+  // Global defensive overrides for inline color/background styles used in
+  // ~500+ legacy view files (Grand Total cells, section headers, summary
+  // rows, modal contents, etc). CSS attribute selectors match the
+  // serialised React style attribute. Doing this at the dark-mode root
+  // means every inline `color: black|gray|rgba(0,0,0,*)` and inline
+  // `background: white|#fff` reads dark without touching every file.
   // -------------------------------------------------------------------------
-  .ant-table-cell [style*="color: black"],
-  .ant-table-cell [style*="color:black"],
-  .ant-table-cell [style*="color: rgb(0, 0, 0)"],
-  .ant-table-cell [style*="color:#000"] {
+
+  // Inline `color: black` / `#000` / `rgb(0,0,0)` → primary text
+  [style*="color: black"],
+  [style*="color:black"],
+  [style*="color: #000"],
+  [style*="color:#000"],
+  [style*="color: rgb(0, 0, 0)"],
+  [style*="color:rgb(0,0,0)"] {
     color: var(--color-text-primary) !important;
   }
-  .ant-table-cell [style*="color: gray"],
-  .ant-table-cell [style*="color:gray"] {
+
+  // Inline `color: rgba(0, 0, 0, *)` (antd's default primary/secondary
+  // text colors used widely in headings inside views)
+  [style*="color: rgba(0, 0, 0, 0.85)"],
+  [style*="color: rgba(0, 0, 0, 0.65)"],
+  [style*="color:rgba(0,0,0,0.85)"],
+  [style*="color:rgba(0,0,0,0.65)"] {
+    color: var(--color-text-primary) !important;
+  }
+  [style*="color: rgba(0, 0, 0, 0.45)"],
+  [style*="color: rgba(0, 0, 0, 0.25)"],
+  [style*="color:rgba(0,0,0,0.45)"],
+  [style*="color:rgba(0,0,0,0.25)"] {
     color: var(--color-text-muted) !important;
+  }
+
+  // Inline `color: gray|grey|#333|#555|#666` → muted
+  [style*="color: gray"],
+  [style*="color:gray"],
+  [style*="color: grey"],
+  [style*="color:grey"],
+  [style*="color: #333"],
+  [style*="color: #555"],
+  [style*="color: #666"],
+  [style*="color: #777"],
+  [style*="color: #888"],
+  [style*="color: #999"] {
+    color: var(--color-text-muted) !important;
+  }
+
+  // Inline white backgrounds → dark surface
+  [style*="background: white"],
+  [style*="background:white"],
+  [style*="background-color: white"],
+  [style*="background-color:white"],
+  [style*="background: #fff"],
+  [style*="background:#fff"],
+  [style*="background-color: #fff"],
+  [style*="background-color:#fff"],
+  [style*="background: #FFFFFF"],
+  [style*="background-color: #FFFFFF"],
+  [style*="background: rgb(255, 255, 255)"],
+  [style*="background-color: rgb(255, 255, 255)"] {
+    background-color: var(--color-bg-surface) !important;
+  }
+
+  // Inline light-gray backgrounds (#fafafa / #f7f7f7 — antd defaults &
+  // body bg) → dark muted surface
+  [style*="background: #fafafa"],
+  [style*="background-color: #fafafa"],
+  [style*="background: #FAFAFA"],
+  [style*="background-color: #FAFAFA"],
+  [style*="background: #f7f7f7"],
+  [style*="background-color: #f7f7f7"],
+  [style*="background: #F7F7F7"],
+  [style*="background-color: #F7F7F7"] {
+    background-color: var(--color-bg-muted) !important;
   }
 
   // -------------------------------------------------------------------------
