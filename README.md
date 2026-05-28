@@ -11,7 +11,7 @@ DMT — Don Muang Tollway Public Co., Ltd. — back-office web client.
 make dev      # http://localhost:3000  (hot-reload dev server)
 make build    # ./build  + ./dist     (production bundle on host)
 make test     # ./coverage             (Jest with coverage on host)
-make serve    # http://localhost:5000  (nginx serving ./build)
+make serve    # http://localhost:8080  (nginx serving ./build)
 make stop     # tear everything down
 make clean    # remove build/dist/coverage/logs
 ```

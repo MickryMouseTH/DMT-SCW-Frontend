@@ -18,7 +18,7 @@ test:
 
 serve:
 	docker compose up -d frontend-serve
-	@echo "App is being served on http://localhost:5000"
+	@echo "App is being served on http://localhost:8080"
 
 stop:
 	docker compose down

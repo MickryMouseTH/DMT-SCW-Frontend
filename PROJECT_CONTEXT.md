@@ -260,7 +260,7 @@ capped via `NODE_OPTIONS=--max_old_space_size=4096`.
 | `frontend-dev`   | Hot-reload dev server (CRACO)    | 3000      | `./src`, `./public`, named `node_modules` |
 | `frontend-test`  | One-shot test runner             | —         | `./coverage`, `./logs`                |
 | `frontend-build` | One-shot production build        | —         | `./build`, `./dist`, `./logs`         |
-| `frontend-serve` | Nginx serving built `./build`    | 5000:80   | `./build` (read-only)                 |
+| `frontend-serve` | Nginx serving built `./build`    | 8080:80   | `./build` (read-only)                 |
 
 Shared resources:
 
@@ -289,7 +289,7 @@ removal and are directly inspectable from macOS.
 make dev       # docker compose up frontend-dev (hot reload on :3000)
 make build     # one-shot production build → ./build
 make test      # one-shot test run with coverage → ./coverage
-make serve     # nginx serving ./build on :5000
+make serve     # nginx serving ./build on :8080
 make stop      # docker compose down
 make clean     # remove build/dist/coverage/logs
 ```
@@ -313,7 +313,7 @@ yarn test --watchAll=false
 make dev              # http://localhost:3000
 make build            # ./build populated on host
 make test             # ./coverage populated on host
-make serve            # http://localhost:5000 (nginx)
+make serve            # http://localhost:8080 (nginx)
 ```
 
 ---
