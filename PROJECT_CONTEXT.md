@@ -1,11 +1,10 @@
 # DMT SCW Frontend — Project Context
 
-> **Program Version: 1.5.9** — Root cause of the still-not-filling
-> menu: legacy sidebar children (`.user-data`, `.sidebar-footer`,
-> `.version-footer`) all carried `flex-grow: 1` from before the
-> accordion existed; they were competing with `.sidebar-menu-scroll`
-> for vertical space. Pinned them to natural height so the menu owns
-> all the leftover space and the L1 items truly distribute.
+> **Program Version: 1.5.10** — Filled the 15 leaves missing from the
+> semantic menu JSON (M-ETC, M090000008..017 admin, M100000001..003
+> E-Tax) by adding 6 new L2 subgroups under G06 / G08; leaves without
+> a route in `_navbar.js` fall back to `/comingsoon` so they're still
+> reachable.
 
 This document is the primary source of truth for the project. Read it before
 making any change.
@@ -521,3 +520,4 @@ finish. See the **Memory requirement** call-out in §6.1.
 | 1.5.7   | 2026-05-28 | Per user request: Mode (theme) selector moved back into the sidebar directly above the Logout button. `TopHeader` removed entirely (`TopHeader.js` + `top-header.scss` deleted). Combined with the v1.5.6 flex-grow rules, the AccordionMenu now extends from below the staff info all the way down to just above the Mode toggle — no more empty space in the sidebar. |
 | 1.5.8   | 2026-05-28 | The v1.5.6 flex chain was broken — `.sidebar-menu-scroll` sized to content so the menu inside couldn't distribute. Made the scroll wrapper a flex column too; menu now uses `flex: 1 1 auto`; L1 items get `flex: 1 1 0` and `min-height: 48px` so closed L1s evenly divide the leftover vertical space (the "yellow box"). Added a synthetic **Dashboard** entry at the top of the L1 list (no children → rendered as a direct `<Link to="/dashboard">`); `AccordionMenu` learned to render L1-leaves without a chevron/expand state; `menuTree.findActivePath` now also matches L1-leaves so the Dashboard highlights when active. |
 | 1.5.9   | 2026-05-28 | The v1.5.8 fix still didn't take visually because legacy `.user-data` / `.sidebar-footer` / `.version-footer` carried `flex-grow: 1` from before the accordion existed — they were splitting leftover height with `.sidebar-menu-scroll` so the menu only got a fraction. Pinned all three to `flex: 0 0 auto` (natural height) so the menu scroll wrapper owns the full leftover height and the L1 flex distribution actually fires. |
+| 1.5.10  | 2026-05-28 | Cross-checked user's authoritative 164-id permission list against `menu_tree_semantic.json` (149 leaves) — 15 missing. Added them under new L2 subgroups: G06 gets `G0605 รายการฝ่าด่าน ETC` (M-ETC-001/002) and `G0606 ใบกำกับภาษี / E-Tax` (M100000001-3); G08 gets `G0803 จัดการเมนูและสิทธิ์`, `G0804 รหัสผ่าน`, `G0805 บัตรอนุญาตและโปรโมชัน`, `G0806 ข้อมูลและพารามิเตอร์` (M090000008-17). `menuTree.buildAccordionTree` now falls back to `/comingsoon` for leaves whose id isn't in `_navbar.js` instead of silently dropping them, so M-ETC-* still appear in the menu and tell the user the page is coming. |

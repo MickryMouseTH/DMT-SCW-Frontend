@@ -103,13 +103,15 @@ export const buildAccordionTree = (lng = "th", pms = []) => {
                 name: resolveLeafLabel(leaf.id, leaf.name, lng, pms),
                 level: 3,
                 expandable: false,
-                link: ref ? ref.link : null,
+                // Leaves without a route in _navbar.js still render — they
+                // route to /comingsoon so the user sees a "coming soon"
+                // page instead of an empty content area. The component
+                // for that leaf can be wired into _navbar.js later
+                // without touching the menu code.
+                link: ref ? ref.link : "/comingsoon",
                 missingRoute: !ref,
               };
-            })
-            // Drop leaves with no resolvable route — the navbar.js doesn't
-            // know them, so navigating would 404.
-            .filter((leaf) => !!leaf.link);
+            });
 
           return {
             id: g2.id,
