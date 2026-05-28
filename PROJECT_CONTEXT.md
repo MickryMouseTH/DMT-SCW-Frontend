@@ -1,10 +1,9 @@
 # DMT SCW Frontend — Project Context
 
-> **Program Version: 1.5.11** — Sidebar is now `position: sticky` at
-> `height: 100vh`, so the logo / staff info / theme toggle / logout /
-> version stay anchored in view. The internal `.sidebar-menu-scroll`
-> wrapper handles overflow, so when a long L2 group is expanded only
-> the menu scrolls — the rest of the page doesn't.
+> **Program Version: 1.5.12** — Image clicks inside the Image Preview
+> modal no longer pop a new browser window; they open a second in-app
+> fullscreen popup (`FullscreenImageModal`). Piloted on menu 3.4
+> (`M030000004`); other 10 views to follow once verified.
 
 This document is the primary source of truth for the project. Read it before
 making any change.
@@ -522,3 +521,4 @@ finish. See the **Memory requirement** call-out in §6.1.
 | 1.5.9   | 2026-05-28 | The v1.5.8 fix still didn't take visually because legacy `.user-data` / `.sidebar-footer` / `.version-footer` carried `flex-grow: 1` from before the accordion existed — they were splitting leftover height with `.sidebar-menu-scroll` so the menu only got a fraction. Pinned all three to `flex: 0 0 auto` (natural height) so the menu scroll wrapper owns the full leftover height and the L1 flex distribution actually fires. |
 | 1.5.10  | 2026-05-28 | Cross-checked user's authoritative 164-id permission list against `menu_tree_semantic.json` (149 leaves) — 15 missing. Added them under new L2 subgroups: G06 gets `G0605 รายการฝ่าด่าน ETC` (M-ETC-001/002) and `G0606 ใบกำกับภาษี / E-Tax` (M100000001-3); G08 gets `G0803 จัดการเมนูและสิทธิ์`, `G0804 รหัสผ่าน`, `G0805 บัตรอนุญาตและโปรโมชัน`, `G0806 ข้อมูลและพารามิเตอร์` (M090000008-17). `menuTree.buildAccordionTree` now falls back to `/comingsoon` for leaves whose id isn't in `_navbar.js` instead of silently dropping them, so M-ETC-* still appear in the menu and tell the user the page is coming. |
 | 1.5.11  | 2026-05-28 | Sidebar reworked from `min-height: 100vh + float: left` to `height: 100vh + position: sticky + top: 0` so it never grows past the viewport and stays anchored while the content area scrolls. Combined with the existing `.sidebar-menu-scroll overflow-y: auto`, an expanded long L2 list now scrolls **inside** the menu wrapper — logo / staff info / theme toggle / logout / version footer all stay visible no matter how deep the expansion. |
+| 1.5.12  | 2026-05-28 | New `FullscreenImageModal` component (`src/components/imagePreview/`) — second in-app popup that shows a single image at full viewport size on a dimmed backdrop, click-to-close. Wired into menu 3.4 (`M030000004 PassingTransactions`) as a pilot: `previewImageNewPage` now calls `setFullscreenImg(url)` instead of `window.open(url, '_blank')`. Other 10 report views with the same pattern (M05/M06/M08 various) still use `window.open` and will be rolled over once the pilot is verified. |

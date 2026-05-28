@@ -1,0 +1,34 @@
+// FullscreenImageModal styles (v1.5.12)
+// Edge-to-edge image preview with a dark backdrop so the image is the
+// only visible thing. Themed via the existing token layer.
+
+.fullscreen-image-modal {
+  .ant-modal-content {
+    background: transparent;
+    box-shadow: none;
+  }
+  .ant-modal-body {
+    background: transparent;
+  }
+  .ant-modal-close-x {
+    color: #ffffff;
+    font-size: 22px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  }
+}
+
+.fullscreen-image-modal__img {
+  max-width: 96vw;
+  max-height: calc(100vh - 80px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  cursor: zoom-out;
+  display: block;
+}
+
+// Stronger backdrop dim so the image pops, in both light and dark themes
+.fullscreen-image-modal-wrap + .ant-modal-mask,
+.ant-modal-mask:has(+ .ant-modal-wrap .fullscreen-image-modal) {
+  background-color: rgba(0, 0, 0, 0.88) !important;
+}

@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 
 import { Typography, Table, Button, Modal, Row, Col, Pagination } from "antd";
 import Skeleton from "../../../components/loading/Loading"
+import FullscreenImageModal from "../../../components/imagePreview/FullscreenImageModal";
 
 import moment from "moment";
 import FormDefault from "../../../components/form/FormDefault";
@@ -49,6 +50,8 @@ const PassingTransactions = (props) => {
   const [previewImg, setPreviewImg] = useState([])
   const [visibleVdo, setVisibleVdo] = useState(false);
   const [previewVdo, setPreviewVdo] = useState([])
+  // v1.5.12 — single image url shown in the FullscreenImageModal popup
+  const [fullscreenImg, setFullscreenImg] = useState(null);
 
   const [PagintaionSize, setPaginationSize] = useState({
     pageNumber: 1,
@@ -742,8 +745,10 @@ const PassingTransactions = (props) => {
     // setVisibleVdo(true);
   }
 
+  // v1.5.12 — clicking an image in the Image Preview modal opens a
+  // second in-app popup with the full-size image (was window.open before).
   const previewImageNewPage = (url) => {
-    window.open(url, '_blank', 'width=800,height=600', 'resizable=true');
+    setFullscreenImg(url);
   }
 
   const handleChangeIdToName = (DataList) => {
@@ -1042,6 +1047,13 @@ const PassingTransactions = (props) => {
             }
           </Row>
         </Modal>
+
+        {/* v1.5.12 — fullscreen image popup; opens when a thumbnail in the
+            Image Preview modal is clicked. Replaces the legacy window.open. */}
+        <FullscreenImageModal
+          src={fullscreenImg}
+          onClose={() => setFullscreenImg(null)}
+        />
       </div>
     </Skeleton>
   );
