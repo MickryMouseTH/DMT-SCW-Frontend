@@ -1,7 +1,8 @@
 window.environment = {
   // "REACT_APP_API": "http://solar.1008bit.com:8110", ///site evithai
-  "REACT_APP_API": "http://172.30.52.70:8000",
+  // "REACT_APP_API": "http://172.30.52.70:8000",
   // "REACT_APP_API": "http://172.30.192.9:8110", ///site solar
+  "REACT_APP_API": "http://localhost:8110",
   "REACT_APP_API_V1": "/dmt-scw/api/v1"
 }
 

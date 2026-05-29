@@ -1,0 +1,96 @@
+===============================================================================
+ DMT SCW Frontend — Build & Run (Docker)
+ บันทึกขั้นตอนการ Build แอป และ Run server
+ วันที่: 2026-05-29
+===============================================================================
+
+ข้อกำหนดเบื้องต้น (Prerequisites)
+-------------------------------------------------------------------------------
+- ต้องมี Docker ทำงานอยู่ (docker info ต้องผ่าน)
+- มีไฟล์ .env ในโปรเจกต์ (docker-compose ใช้ env_file: .env)
+- ทุกขั้นตอนสั่งผ่าน Makefile / docker compose
+
+
+-------------------------------------------------------------------------------
+ 1) BUILD แอป  ->  make build
+-------------------------------------------------------------------------------
+คำสั่ง:
+    make build
+
+ขั้นตอนที่ make build ทำให้ (ดูใน Makefile target: build -> clean-all):
+    1. rm -rf build dist coverage logs                (ลบ artifact เก่า)
+    2. docker image rm dmt-scw-frontend:build/:test    (ลบ image เก่า)
+    3. docker volume rm node_modules / yarn_cache      (ลบ volume เก่า)
+    4. mkdir -p build dist logs
+    5. docker compose build --no-cache frontend-build  (build image จากศูนย์)
+    6. docker compose run --rm frontend-build          (รัน production build)
+         -> craco build แล้ว copy ผลลัพธ์ออกมาที่ ./build และ ./dist
+    7. docker compose down --remove-orphans
+
+ผลลัพธ์ (Build artifacts):
+    ./build   -> ไฟล์ static ที่ build แล้ว (index.html, static/js, static/css ...)
+    ./dist    -> สำเนาเดียวกับ ./build
+
+ข้อความที่ควรเห็นเมื่อสำเร็จ:
+    The build folder is ready to be deployed.
+    Build artifacts written to ./build and ./dist
+
+
+-------------------------------------------------------------------------------
+ 2) RUN SERVER  ->  make serve
+-------------------------------------------------------------------------------
+คำสั่ง:
+    make serve
+
+สิ่งที่เกิดขึ้น:
+    docker compose up -d frontend-serve
+    -> สร้าง container ชื่อ "scw-frontend-serve" (image: nginx:1.25-alpine)
+    -> nginx เสิร์ฟไฟล์จาก ./build (mount แบบ read-only)
+    -> map port  8080 (host)  ->  80 (container)
+
+หมายเหตุพอร์ต:
+    ใช้ host port 8080 แทน 5000 เพราะบน macOS พอร์ต 5000 ถูก
+    Control Center / AirPlay Receiver ใช้งานอยู่
+
+เปิดใช้งานแอปที่:
+    http://localhost:8080
+
+
+-------------------------------------------------------------------------------
+ 3) ตรวจสอบสถานะ (Verify)
+-------------------------------------------------------------------------------
+คำสั่ง:
+    docker compose ps
+    curl -s -o /dev/null -w "HTTP %{http_code}\n" http://localhost:8080
+
+ผลลัพธ์ที่คาดหวัง:
+    NAME                 IMAGE               STATUS                 PORTS
+    scw-frontend-serve   nginx:1.25-alpine   Up (healthy)           0.0.0.0:8080->80/tcp
+    HTTP 200
+
+
+-------------------------------------------------------------------------------
+ คำสั่งอื่น ๆ ที่มีประโยชน์ (Makefile targets)
+-------------------------------------------------------------------------------
+    make dev        -> dev server (hot-reload) ที่ http://localhost:3000
+    make test       -> รัน Jest test แบบ one-shot (coverage ออกที่ ./coverage)
+    make serve      -> เสิร์ฟ production build ที่ http://localhost:8080
+    make logs       -> ดู log ของ container (docker compose logs -f)
+    make stop       -> หยุด container ทั้งหมด (docker compose down)
+    make clean      -> ลบ artifact บน host (build dist coverage logs)
+    make prune      -> stop + clean + ลบ volume
+
+
+-------------------------------------------------------------------------------
+ ปัญหาที่เจอบน macOS (Troubleshooting)
+-------------------------------------------------------------------------------
+อาการ:
+    mkdir: build: Operation not permitted
+สาเหตุ:
+    คำสั่ง make ถูกรันใน sandbox ที่ไม่อนุญาตให้สร้างโฟลเดอร์ใหม่
+    ภายใต้ ~/Desktop
+วิธีแก้:
+    รัน make build / make serve โดยไม่อยู่ใน sandbox (รันตรงจาก terminal ปกติ)
+    เพื่อให้ docker เขียน artifacts ลง ./build และ ./dist ได้
+
+===============================================================================

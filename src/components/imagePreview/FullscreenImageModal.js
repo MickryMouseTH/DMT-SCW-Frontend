@@ -29,14 +29,15 @@ const FullscreenImageModal = ({ src, onClose, alt = "" }) => (
     maskClosable
     destroyOnClose
     className="fullscreen-image-modal"
-    width="96vw"
+    width="100vw"
+    style={{ top: 0, maxWidth: "100vw", margin: 0, paddingBottom: 0 }}
     bodyStyle={{
       padding: 0,
       background: "transparent",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      minHeight: "calc(100vh - 80px)",
+      height: "100vh",
     }}
     wrapClassName="fullscreen-image-modal-wrap"
   >
