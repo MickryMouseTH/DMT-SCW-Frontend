@@ -9,6 +9,7 @@ import { Typography, Table, Button, Modal, Row, Col } from "antd";
 import Skeleton from "../../../components/loading/Loading"
 
 import FullscreenImageModal from "../../../components/imagePreview/FullscreenImageModal";
+import FullscreenVideoModal from "../../../components/imagePreview/FullscreenVideoModal";
 import moment from "moment";
 import FormDefault from "../../../components/form/FormDefault";
 import { GET_DATA_INFO_M060000016E, GET_DATA_INFO_M060000016E_getPaymentmethodListAPI } from "../../../service/api/report";
@@ -37,6 +38,7 @@ const ReportTrafficDiffBank = (props) => {
   const [visibleVdo, setVisibleVdo] = useState(false);
   const [previewVdo, setPreviewVdo] = useState([])
   const [fullscreenImg, setFullscreenImg] = useState(null);
+  const [fullscreenVdo, setFullscreenVdo] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
   const fields = [
@@ -429,7 +431,7 @@ const ReportTrafficDiffBank = (props) => {
   }
 
   const previewVideo = (data) => {
-    window.open(data.videoUrl, '_blank', 'width=800,height=600', 'resizable=true');
+    setFullscreenVdo(data.videoUrl);
     // setPreviewVdo(data.videoUrl);
     // setVisibleVdo(true);
   }
@@ -618,6 +620,11 @@ const ReportTrafficDiffBank = (props) => {
         <FullscreenImageModal
           src={fullscreenImg}
           onClose={() => setFullscreenImg(null)}
+        />
+        {/* v1.5.16 — fullscreen video popup (MJPEG via <img>); replaces window.open */}
+        <FullscreenVideoModal
+          src={fullscreenVdo}
+          onClose={() => setFullscreenVdo(null)}
         />
       </Skeleton>
   );

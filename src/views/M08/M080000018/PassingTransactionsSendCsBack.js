@@ -8,6 +8,7 @@ import { Typography, Table, Button, Modal, Row, Col, Pagination, Input, Form } f
 import Skeleton from "../../../components/loading/Loading"
 
 import FullscreenImageModal from "../../../components/imagePreview/FullscreenImageModal";
+import FullscreenVideoModal from "../../../components/imagePreview/FullscreenVideoModal";
 import moment from "moment";
 import FormDefault from "../../../components/form/FormDefault/FormDefault";
 import { GET_DATA_INFO_M080000018_Page_Search, GET_DATA_INFO_M080000018_SEND_CS, GET_DATA_INFO_M080000018_CHANGE_SIGNAL_CODE } from "../../../service/api/report";
@@ -31,6 +32,7 @@ const PassingTransactions = (props) => {
   const [visibleVdo, setVisibleVdo] = useState(false);
   const [previewVdo, setPreviewVdo] = useState([])
   const [fullscreenImg, setFullscreenImg] = useState(null);
+  const [fullscreenVdo, setFullscreenVdo] = useState(null);
   const [visibleSendCs, setVisibleSendCs] = useState(false);
   const [visibleChangeSignalCode, setVisibleChangeSignalCode] = useState(false);
   const [selectRecord, setSelectRecord] = useState(null);
@@ -470,7 +472,7 @@ const PassingTransactions = (props) => {
   }
 
   const previewVideo = (data) => {
-    window.open(data.videoUrl, '_blank', 'width=800,height=600', 'resizable=true');
+    setFullscreenVdo(data.videoUrl);
     // setPreviewVdo(data.videoUrl);
     // setVisibleVdo(true);
   }
@@ -903,6 +905,11 @@ const PassingTransactions = (props) => {
         <FullscreenImageModal
           src={fullscreenImg}
           onClose={() => setFullscreenImg(null)}
+        />
+        {/* v1.5.16 — fullscreen video popup (MJPEG via <img>); replaces window.open */}
+        <FullscreenVideoModal
+          src={fullscreenVdo}
+          onClose={() => setFullscreenVdo(null)}
         />
       </div>
     </Skeleton >

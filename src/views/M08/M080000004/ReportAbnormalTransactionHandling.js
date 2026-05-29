@@ -10,6 +10,7 @@ import { Typography, Table, Modal, Row, Col, Pagination } from "antd";
 import Skeleton from "../../../components/loading/Loading"
 
 import FullscreenImageModal from "../../../components/imagePreview/FullscreenImageModal";
+import FullscreenVideoModal from "../../../components/imagePreview/FullscreenVideoModal";
 import moment from "moment";
 import FormDefault from "../../../components/form/FormDefault";
 import { GET_DATA_INFO_M080000004_Page_Search, GET_DATA_INFO_M080000004 } from "../../../service/api/report";
@@ -38,6 +39,7 @@ const ReportAbnormalTransactionHandling = (props) => {
   const [previewVdo, setPreviewVdo] = useState([])
 
   const [fullscreenImg, setFullscreenImg] = useState(null);
+  const [fullscreenVdo, setFullscreenVdo] = useState(null);
   const [PagintaionSize, setPaginationSize] = useState({
     pageNumber: 1,
     pageSize: 10
@@ -462,7 +464,7 @@ const ReportAbnormalTransactionHandling = (props) => {
   }
 
   const previewVideo = (data) => {
-    window.open(data.videoUrl, '_blank', 'width=800,height=600', 'resizable=true');
+    setFullscreenVdo(data.videoUrl);
     // setPreviewVdo(data.videoUrl);
     // setVisibleVdo(true);
   }
@@ -740,6 +742,11 @@ const ReportAbnormalTransactionHandling = (props) => {
         <FullscreenImageModal
           src={fullscreenImg}
           onClose={() => setFullscreenImg(null)}
+        />
+        {/* v1.5.16 — fullscreen video popup (MJPEG via <img>); replaces window.open */}
+        <FullscreenVideoModal
+          src={fullscreenVdo}
+          onClose={() => setFullscreenVdo(null)}
         />
       </Skeleton>
   );

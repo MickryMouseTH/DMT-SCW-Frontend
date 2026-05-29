@@ -1,12 +1,32 @@
-# DMT SCW Frontend — Project Context
+# DMT SCW Frontend — Project Context & Version Log
 
-> **Program Version: 1.5.13** — `FullscreenImageModal` rolled out from
-> the v1.5.12 pilot (menu 3.4) to all 10 remaining report views. Every
-> "click an image inside the Image Preview modal" now opens an in-app
-> fullscreen popup instead of `window.open`-ing a new browser window.
+> **Program Version: 1.5.17** — `FullscreenVideoModal` rolled out from the
+> v1.5.16 pilot (menu 3.4) to all 10 remaining report views. Every "view
+> video" button now opens an in-app fullscreen popup (the NVR stream is
+> MJPEG, rendered via `<img>`) instead of `window.open`-ing a new browser
+> window. See the Version History (§10) for the full 1.5.14 → 1.5.17 trail.
 
-This document is the primary source of truth for the project. Read it before
-making any change.
+This document (formerly `PROJECT_CONTEXT.md`) is the primary source of truth
+for the project. Read it before making any change.
+
+---
+
+## 0. Maintenance Rule (READ FIRST)
+
+**Every time any file in this repo is changed, you MUST:**
+
+1. **Update `scw-frontend-version.md`** (this file) — add/adjust the relevant
+   section and append a row to the Version History table (§10) describing
+   what changed.
+2. **Update `CLAUDE.md`** — keep the Claude Code memory in sync with the same
+   change (architecture notes, conventions, new components, etc.).
+3. **Bump the program version** — increment the version in
+   `src/contrainers/DefaultLayout/DefaultMenu.js` (sidebar footer) and the
+   banner at the top of this file.
+4. **Put to git** — `make build` to verify, then commit **and push** the
+   change (branch `main`, push to `origin`).
+
+This rule is mandatory and applies to code, styles, config, and docs alike.
 
 ---
 
@@ -50,7 +70,8 @@ pages.
 
 ```
 dmt-scw-frontend/
-├── PROJECT_CONTEXT.md            ← this file
+├── scw-frontend-version.md      ← this file (was PROJECT_CONTEXT.md)
+├── CLAUDE.md                     ← Claude Code memory (keep in sync, see §0)
 ├── package.json
 ├── craco.config.js               ← CRACO + LESS plugin (antd theme vars)
 ├── docker-compose.yaml           ← dev / build / test / serve services
@@ -490,6 +511,57 @@ finish. See the **Memory requirement** call-out in §6.1.
 
 ---
 
+## 8.5 Fullscreen Media Previews & Session Heartbeat (v1.5.12–1.5.17)
+
+### Fullscreen media popups (`src/components/imagePreview/`)
+
+Two small, near-identical modal components replace the legacy
+`window.open(url, '_blank', ...)` pattern so previews stay in-app:
+
+- **`FullscreenImageModal`** — shows a single image at **90% of a
+  near-fullscreen popup** on a dimmed backdrop; click image / mask / ✕ to
+  close. Used by the Image Preview flow across all 11 report views.
+- **`FullscreenVideoModal`** — shows the NVR clip. **Important:** the stream
+  API (`DMT_API_STREAM_NVR/apistream.py`, FastAPI `GET /video_feed?lane_name=
+  &playtime=ddmmyyyyHHMMSS`) returns **MJPEG** (`multipart/x-mixed-replace;
+  boundary=frame`). An HTML `<video>` element **cannot** play that content
+  type, so the popup renders the stream in an **`<img>`** (browsers display
+  multipart/x-mixed-replace natively in img). `destroyOnClose` unmounts the
+  img and tears down the streaming connection.
+
+**Wiring pattern (same 4 edits in every report view):** import the modal →
+`const [fullscreenImg/Vdo, setFullscreen…] = useState(null)` → the
+`previewImage`/`previewVideo` handler calls `setFullscreen…(url)` →
+`<Fullscreen…Modal src={…} onClose={() => setFullscreen…(null)} />` near the
+bottom of the JSX. The 11 views: M030000001, M030000004, M030000011,
+M050000003, M060000006, M060000011, M060000013, M060000016E, M080000004 (+
+Page2), M080000018.
+
+### Global session interceptor (`src/tools/fecth.js`)
+
+The app uses native `fetch` (no axios). The central `Fetch` wrapper is the
+single choke-point every API call passes through, so it doubles as the
+session interceptor: a response with HTTP **401** or status code
+**F203 / F204** clears `user_token` + `user_data` and redirects to
+`/#/login` (guarded against redirect loops on the login page; JSON parsed
+defensively for empty 401 bodies). Callers may opt out via
+`checkCode = { F203: false }` (e.g. change-password).
+
+### Session heartbeat (`src/contrainers/DefaultLayout/DefaultLayout.js`)
+
+On logged-in pages, `DefaultLayout` polls **`GET /heartbeat` every 30 s**
+(`heartbeatAPI`). When the response's `remainingSeconds < 300` it shows a
+"session about to expire" SweetAlert with a **"Stay logged in"** action that
+calls **`GET /version`** (`versionAPI`) to bump the server-side timer. A
+`warnedRef` shows the popup once per threshold-crossing (re-armed when the
+timer is renewed); a `tokenRef` keeps the interval reading the freshest
+token. Expiry itself (401/F203/F204) is handled by the `Fetch` interceptor
+above. Config constants: `HEARTBEAT_INTERVAL_MS = 30000`,
+`SESSION_WARN_SECONDS = 300`. Endpoints are assumed under `apiV1`
+(`/dmt-scw/api/v1/heartbeat`, `/version`).
+
+---
+
 ## 9. Coding Conventions
 
 - **Never hardcode colors in JS/SCSS.** Use a semantic token or a class
@@ -523,3 +595,7 @@ finish. See the **Memory requirement** call-out in §6.1.
 | 1.5.11  | 2026-05-28 | Sidebar reworked from `min-height: 100vh + float: left` to `height: 100vh + position: sticky + top: 0` so it never grows past the viewport and stays anchored while the content area scrolls. Combined with the existing `.sidebar-menu-scroll overflow-y: auto`, an expanded long L2 list now scrolls **inside** the menu wrapper — logo / staff info / theme toggle / logout / version footer all stay visible no matter how deep the expansion. |
 | 1.5.12  | 2026-05-28 | New `FullscreenImageModal` component (`src/components/imagePreview/`) — second in-app popup that shows a single image at full viewport size on a dimmed backdrop, click-to-close. Wired into menu 3.4 (`M030000004 PassingTransactions`) as a pilot: `previewImageNewPage` now calls `setFullscreenImg(url)` instead of `window.open(url, '_blank')`. Other 10 report views with the same pattern (M05/M06/M08 various) still use `window.open` and will be rolled over once the pilot is verified. |
 | 1.5.13  | 2026-05-28 | Pilot verified — rolled out the `FullscreenImageModal` to all 10 remaining views: M030000001 SupervisorAdjustment, M030000011 CardPassingTransactions, M050000003 MaintenancePassingTransaction, M060000006 TollAuditMtcSupAdjDetail, M060000011 ReportAuditAdjustment, M060000013 ReportAuditMtc, M060000016E ReportTrafficDiffBank, M080000004 ReportAbnormalTransactionHandling + Page2, M080000018 PassingTransactionsSendCsBack. Each got the same 4-edit transform (import + useState + setFullscreenImg(url) body + `<FullscreenImageModal/>` at bottom). No more `window.open(url, '_blank')` for image previews anywhere in `src/views/` (video preview unaffected). |
+| 1.5.14  | 2026-05-29 | Menu 3.4 (`M030000004 PassingTransactions`) — **PAN filter survives pagination**: the `pan` value was missing from the `<Pagination>` `onChange`/`onShowSizeChange` payloads, so paging past page 1 dropped the PAN filter; now included like the other filters. `FullscreenImageModal` expanded to fill the viewport (100vw / 100vh, intermediate step). Dev API config pointed at `http://localhost:8110`; `Makefile` gained clean-all/`--no-cache` build + serve docker shortcuts. |
+| 1.5.15  | 2026-05-29 | Menu 3.4 filter UX: **3-column layout** — `FormDefault` gained a `colSpan` prop (default 10 = 2 columns, unchanged for every other screen) and 3.4 passes `colSpan={8}` for 3 columns; **จากวันที่ / ถึงวันที่ moved to be the first two filters**; PAN filter **renamed to "PAN/EMV Card No."** and a full 16-digit numeric value is **masked to `441770XXXXXX8826`** (first 6 + last 4) before querying; every free-text filter is **trimmed** of leading/trailing spaces & tabs on search. Bug fix: dark-mode **fixed (sticky) table columns now use an opaque hover background** (`--color-bg-surface-elevated`) — the previous translucent `--color-bg-hover` let scrolled-under content bleed through and overlap the pinned columns on row hover. `FullscreenImageModal` image re-sized to **90% of the popup** (not the whole viewport). |
+| 1.5.16  | 2026-05-29 | **In-app fullscreen video + session management.** New `FullscreenVideoModal` (`src/components/imagePreview/`) — pilot on menu 3.4; the NVR stream API (`DMT_API_STREAM_NVR/apistream.py`, FastAPI `/video_feed`) returns **MJPEG** (`multipart/x-mixed-replace`), which `<video>` cannot play, so the popup renders it via `<img>` at 90% of the popup. **Session strategy:** the central `Fetch` wrapper (`src/tools/fecth.js`) now acts as a global fetch interceptor — any response with HTTP **401** or status code **F203/F204** clears the token and redirects to login (loop-guarded, defensive JSON parse). Added `heartbeatAPI` / `versionAPI`; `DefaultLayout` **polls `/heartbeat` every 30 s** on logged-in pages and, when `remainingSeconds < 300`, shows a "session about to expire" Swal with a **"Stay logged in"** action that pings `/version` to bump the server timer (warned once per threshold-crossing; token read via ref to avoid stale closures). |
+| 1.5.17  | 2026-05-29 | **`FullscreenVideoModal` rolled out to all 10 remaining report views** (same list as the 1.5.13 image rollout) — each got the same 4-edit transform (import + `fullscreenVdo` useState + `previewVideo` body now `setFullscreenVdo(...)` + `<FullscreenVideoModal/>`). No more `window.open(videoUrl, '_blank')` for video previews anywhere in `src/views/`. Docs: **renamed `PROJECT_CONTEXT.md` → `scw-frontend-version.md`** and added the **Maintenance Rule (§0)** — update `scw-frontend-version.md` + `CLAUDE.md`, bump version, and put to git on every change. |

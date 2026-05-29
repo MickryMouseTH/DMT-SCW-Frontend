@@ -18,6 +18,7 @@ import {
 import Skeleton from "../../../components/loading/Loading"
 
 import FullscreenImageModal from "../../../components/imagePreview/FullscreenImageModal";
+import FullscreenVideoModal from "../../../components/imagePreview/FullscreenVideoModal";
 import {
   GET_DATA_TOLL_AUDIT_MTC_SUB_ADJ_DETAIL_M060000006,
   POST_SUB_ADJUST_DETAIL_SAVE_M060000006,
@@ -42,6 +43,7 @@ const TollAuditMtcSupAdjustDetail = (props) => {
     // setPreviewVdo
   ] = useState("");
   const [fullscreenImg, setFullscreenImg] = useState(null);
+  const [fullscreenVdo, setFullscreenVdo] = useState(null);
   const [visiblePopup, setVisiblePopup] = useState(false);
   const [vehicleTypeList, setVehicleTypeList] = useState([]);
   const [selectRecord, setSelectRecord] = useState(null);
@@ -466,7 +468,7 @@ const TollAuditMtcSupAdjustDetail = (props) => {
   };
 
   const previewVideo = (videoUrl) => {
-    window.open(videoUrl, '_blank', 'width=800,height=600', 'resizable=true');
+    setFullscreenVdo(videoUrl);
     // setPreviewVdo(videoUrl);
     // setVisibleVdo(true);
   };
@@ -767,6 +769,11 @@ const TollAuditMtcSupAdjustDetail = (props) => {
         <FullscreenImageModal
           src={fullscreenImg}
           onClose={() => setFullscreenImg(null)}
+        />
+        {/* v1.5.16 — fullscreen video popup (MJPEG via <img>); replaces window.open */}
+        <FullscreenVideoModal
+          src={fullscreenVdo}
+          onClose={() => setFullscreenVdo(null)}
         />
       </Skeleton>
   );
