@@ -66,6 +66,38 @@ const PassingTransactions = (props) => {
 
   const fields = [
     {
+      type: "datePicker",
+      option: {
+        name: "startDate",
+        label: "จากวันที่",
+        childrenProps: {
+          format: dateFormat,
+          placeholder: "เลือกวันที่...",
+          showTime: { defaultValue: moment('00:00:00', 'HH:mm:ss') }
+        },
+        rules: [{ required: true, message: "กรุณาเลือกวันที่เริ่ม!" }],
+        initialValue: _isEmpty(initialValue)
+          ? moment("00:00:00", "HH:mm:ss")
+          : initialValue.startDate,
+      },
+    },
+    {
+      type: "datePicker",
+      option: {
+        name: "endDate",
+        label: "ถึงวันที่",
+        childrenProps: {
+          format: dateFormat,
+          placeholder: "เลือกวันที่...",
+          showTime: { defaultValue: moment('23:59:59', 'HH:mm:ss') }
+        },
+        rules: [{ required: true, message: "กรุณาเลือกวันที่สิ้นสุด!" }],
+        initialValue: _isEmpty(initialValue)
+          ? moment("23:59:59", "HH:mm:ss")
+          : initialValue.endDate,
+      },
+    },
+    {
       type: "select",
       option: {
         name: "plaza",
@@ -96,38 +128,6 @@ const PassingTransactions = (props) => {
         childrenProps: { placeholder: "ป้อนหมายเลขช่องทาง..." },
         rules: [{ required: false, message: "กรุณาป้อนหมายเลขช่องทาง!" }],
         initialValue: initialValue.lane,
-      },
-    },
-    {
-      type: "datePicker",
-      option: {
-        name: "startDate",
-        label: "จากวันที่",
-        childrenProps: {
-          format: dateFormat,
-          placeholder: "เลือกวันที่...",
-          showTime: { defaultValue: moment('00:00:00', 'HH:mm:ss') }
-        },
-        rules: [{ required: true, message: "กรุณาเลือกวันที่เริ่ม!" }],
-        initialValue: _isEmpty(initialValue)
-          ? moment("00:00:00", "HH:mm:ss")
-          : initialValue.startDate,
-      },
-    },
-    {
-      type: "datePicker",
-      option: {
-        name: "endDate",
-        label: "ถึงวันที่",
-        childrenProps: {
-          format: dateFormat,
-          placeholder: "เลือกวันที่...",
-          showTime: { defaultValue: moment('23:59:59', 'HH:mm:ss') }
-        },
-        rules: [{ required: true, message: "กรุณาเลือกวันที่สิ้นสุด!" }],
-        initialValue: _isEmpty(initialValue)
-          ? moment("23:59:59", "HH:mm:ss")
-          : initialValue.endDate,
       },
     },
     {
@@ -230,9 +230,9 @@ const PassingTransactions = (props) => {
       type: "input",
       option: {
         name: "pan",
-        label: "PAN",
-        childrenProps: { placeholder: "PAN..." },
-        rules: [{ required: false, message: "กรุณาป้อน PAN!" }],
+        label: "PAN/EMV Card No.",
+        childrenProps: { placeholder: "PAN/EMV Card No. ..." },
+        rules: [{ required: false, message: "กรุณาป้อน PAN/EMV Card No.!" }],
         initialValue: initialValue.pan,
       },
     },
@@ -774,6 +774,16 @@ const PassingTransactions = (props) => {
   };
 
   const handleOnFinish = (value) => {
+    // Trim leading/trailing spaces & tabs from every free-text filter so a
+    // value like "  1234 " is searched as "1234" (and " " becomes empty/null).
+    ["lane", "jobNo", "staffId", "pan"].forEach((key) => {
+      if (typeof value[key] === "string") value[key] = value[key].trim();
+    });
+    // Mask a full 16-digit PAN/EMV card number: keep the first 6 (BIN) and
+    // last 4 digits, hide the middle 6 — e.g. 4417701234568826 -> 441770XXXXXX8826
+    if (typeof value.pan === "string" && /^\d{16}$/.test(value.pan)) {
+      value.pan = value.pan.slice(0, 6) + "XXXXXX" + value.pan.slice(12);
+    }
     setInitialValue(value);
 
     handleChangeIdToName(value);
@@ -895,6 +905,7 @@ const PassingTransactions = (props) => {
         <FormDefault
           buttonWrapper={{ md: 24, lg: 5, xl: 3 }}
           formWrapper={{ md: 24, lg: 19, xl: 21 }}
+          colSpan={8}
           typeButton="primary"
           submitText="ค้นหา"
           fields={fields}

@@ -17,8 +17,8 @@ const disabledDate = (current) => {
 
 
 const children = {
-  select: (option) => (
-    <Col span={10} key={option.name}>
+  select: (option, span = 10) => (
+    <Col span={span} key={option.name}>
       <Form.Item
         className="mb-3"
         label={option.label}
@@ -29,8 +29,8 @@ const children = {
       </Form.Item>
     </Col>
   ),
-  input: (option) => (
-    <Col span={10} key={option.name}>
+  input: (option, span = 10) => (
+    <Col span={span} key={option.name}>
       <Form.Item
         className="mb-3"
         label={option.label}
@@ -41,8 +41,8 @@ const children = {
       </Form.Item>
     </Col>
   ),
-  checkbox: (option) => (
-    <Col span={10} key={option.name}>
+  checkbox: (option, span = 10) => (
+    <Col span={span} key={option.name}>
       <Form.Item
         className="mb-3 mt-3"
         label={""}
@@ -54,8 +54,8 @@ const children = {
       </Form.Item>
     </Col>
   ),
-  inputpassword: (option) => (
-    <Col span={10} key={option.name}>
+  inputpassword: (option, span = 10) => (
+    <Col span={span} key={option.name}>
       <Form.Item
         className="mb-3"
         label={option.label}
@@ -69,8 +69,8 @@ const children = {
       </Form.Item>
     </Col>
   ),
-  inputnumber: (option) => (
-    <Col span={10} key={option.name}>
+  inputnumber: (option, span = 10) => (
+    <Col span={span} key={option.name}>
       <Form.Item
         className="mb-3"
         label={option.label}
@@ -84,8 +84,8 @@ const children = {
       </Form.Item>
     </Col>
   ),
-  datePicker: (option) => (
-    <Col span={10} key={option.name}>
+  datePicker: (option, span = 10) => (
+    <Col span={span} key={option.name}>
       <ConfigProvider locale="th_TH">
         <Form.Item className="mb-3" label={option.label} name={option.name} rules={option.rules}>
           <DatePicker size={60} locale={locale} className="rounded-pill max-WS w-100"
@@ -96,8 +96,8 @@ const children = {
       </ConfigProvider>
     </Col>
   ),
-  datePicker2: (option) => (
-    <Col span={10} key={option.name}>
+  datePicker2: (option, span = 10) => (
+    <Col span={span} key={option.name}>
       <ConfigProvider locale="th_TH">
         <Form.Item className="mb-3" label={option.label} name={option.name} rules={option.rules}>
           <DatePicker size={60} locale={locale} className="rounded-pill max-WS w-100"
@@ -108,8 +108,8 @@ const children = {
       </ConfigProvider>
     </Col>
   ),
-  timePicker: (option) => (
-    <Col span={10} key={option.name}>
+  timePicker: (option, span = 10) => (
+    <Col span={span} key={option.name}>
       <ConfigProvider locale="th_TH">
       <Form.Item
         className="mb-3"
@@ -131,6 +131,7 @@ const FormDefault = ({
   action = [],
   actionBoutton = [],
   fields = [],
+  colSpan = 10,
   submitButton = true,
   submitText = "ค้นหา",
   typeButton = "ghost",
@@ -154,7 +155,7 @@ const FormDefault = ({
   //   console.log(fields);
   // };
   const getFields = () => {
-    return fields.map((field) => children[field.type](field.option));
+    return fields.map((field) => children[field.type](field.option, colSpan));
   };
 
   const handleOnFinish = async (v) => {

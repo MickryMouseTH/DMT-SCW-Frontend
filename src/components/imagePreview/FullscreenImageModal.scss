@@ -3,12 +3,6 @@
 // only visible thing. Themed via the existing token layer.
 
 .fullscreen-image-modal {
-  // Fill the entire viewport — true fullscreen, no surrounding gap.
-  top: 0;
-  margin: 0;
-  padding: 0;
-  max-width: 100vw;
-
   .ant-modal-content {
     background: transparent;
     box-shadow: none;
@@ -23,11 +17,12 @@
   }
 }
 
+// Image fills 90% of the popup body (not the popup itself).
+// Use width/height (not max-*) so small source images scale UP to 90%,
+// and object-fit: contain keeps the aspect ratio inside that box.
 .fullscreen-image-modal__img {
-  max-width: 100vw;
-  max-height: 100vh;
-  width: auto;
-  height: auto;
+  width: 90%;
+  height: 90%;
   object-fit: contain;
   cursor: zoom-out;
   display: block;

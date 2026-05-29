@@ -255,9 +255,14 @@ html[data-theme="dark"] #root {
   .ant-table-thead .ant-table-cell-fix-right {
     background-color: var(--color-bg-muted) !important;
   }
+  // Sticky (fixed) columns sit ON TOP of the cells that scroll underneath
+  // them, so they need a FULLY OPAQUE background. --color-bg-hover is a
+  // translucent overlay (rgba ...0.06) — if used here, the scrolled-away
+  // columns bleed through the pinned column on row hover and the text
+  // appears doubled/overlapping. Use the opaque elevated surface instead.
   .ant-table-tbody > tr.ant-table-row:hover > td.ant-table-cell-fix-left,
   .ant-table-tbody > tr.ant-table-row:hover > td.ant-table-cell-fix-right {
-    background-color: var(--color-bg-hover) !important;
+    background-color: var(--color-bg-surface-elevated) !important;
   }
 
   // Bordered table cell separators
