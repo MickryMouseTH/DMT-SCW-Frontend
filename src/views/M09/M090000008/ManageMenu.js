@@ -6,13 +6,14 @@ import { connect } from "react-redux";
 import { Table, Button, Popconfirm, Tooltip } from "antd";
 import Skeleton from "../../../components/loading/Loading"
 
-import { UsergroupAddOutlined, EditOutlined, DeleteFilled } from '@ant-design/icons';
+import { UsergroupAddOutlined, EditOutlined, DeleteFilled, ReloadOutlined } from '@ant-design/icons';
 
 import FormDefault from "../../../components/form/FormDefault/FormDefault";
 
 import {
   GET_DATA_INFO_ManageMenu, ADD_DATA_INFO_ManageMenu,
-  DELETE_DATA_INFO_ManageMenu, EDIT_DATA_INFO_ManageMenu
+  DELETE_DATA_INFO_ManageMenu, EDIT_DATA_INFO_ManageMenu,
+  REFRESH_MASTER_CACHE
 } from "../../../service/api/menu";
 
 import { _isEmpty, regexLanguage, _setYearThai } from '../../../tools/util'
@@ -364,6 +365,45 @@ const UserRoleGroup = (props) => {
     setIsSearch(!isSearch)
   };
 
+  // Refresh the backend master-data cache (POST /cache/refresh).
+  const handleRefreshMaster = () => {
+    Swal.fire({
+      title: 'รีเฟรช Master ?',
+      text: 'ต้องการรีเฟรชข้อมูล Master ของระบบหรือไม่?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#91098f',
+      cancelButtonColor: '#e6e6e6',
+      confirmButtonText: 'ตกลง',
+      cancelButtonText: '<span style="color:black">ยกเลิก</span>',
+    }).then(async (result) => {
+      if (result.value) {
+        try {
+          setLoading(true)
+          const res = await REFRESH_MASTER_CACHE(props.auth.token);
+          if (res && res.status && res.status.code === "S200") {
+            setLoading(false)
+            Swal.fire({
+              icon: "success",
+              title: "รีเฟรช Master สำเร็จ",
+              text: res.status.message,
+            });
+          } else {
+            setLoading(false)
+            Swal.fire({
+              icon: "error",
+              title: "Failed to fetch. ",
+              text: res && res.status ? res.status.message : "",
+            });
+          }
+        } catch (error) {
+          setLoading(false)
+          console.log(error);
+        }
+      }
+    })
+  };
+
   const actionBoutton = [
 
     (isSearch ?
@@ -374,6 +414,11 @@ const UserRoleGroup = (props) => {
         name: "ยกเลิก",
         props: { type: "ghost", onClick: handleSwitchForm, disabled: false },
       }),
+    // Refresh Master — sits right after the "เพิ่มข้อมูลเมนู" button (search mode only)
+    ...(isSearch ? [{
+      name: "Refresh Master",
+      props: { type: "primary", ghost: true, onClick: handleRefreshMaster, disabled: false, icon: <ReloadOutlined /> },
+    }] : []),
   ];
 
   const handleFields = () => {

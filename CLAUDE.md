@@ -70,6 +70,8 @@ dark mode works through CSS rules only.
 
 `DefaultMenu.js` renders menus recursively via `MenuItemRecursive` (supports ≤3 levels). State is held in `useMenuState` (`openIds: Set`) — multiple branches can be open simultaneously. The sidebar itself slides in/out on mobile via the `.sidebar-body--mobile-open` CSS class. See `scw-frontend-version.md` (formerly `PROJECT_CONTEXT.md`) for the full interaction contract and the version history.
 
+Menu CRUD lives in menu 9.8 (`M090000008 ManageMenu`); its **"Refresh Master"** button calls `REFRESH_MASTER_CACHE` (`POST /cache/refresh`, in `src/service/api/menu.js`) to rebuild the backend master-data cache (v1.5.18).
+
 ### Routing
 
 Routes are split by module in `src/route/` (M01.js–M10.js + Main.js) and merged in `src/route/index.js`. Each route entry has an `id` field matching a `menuId` from `_navbar.js` — `DefaultLayout.renderHeader()` uses this to look up the page title.

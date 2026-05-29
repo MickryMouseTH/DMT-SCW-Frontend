@@ -33,6 +33,13 @@ export const DELETE_DATA_INFO_ManageMenu = async (data, token) => {
   return res;
 }
 
+// Refresh the backend master-data cache. Triggered by the "Refresh Master"
+// button on menu 9.8 (M090000008 ManageMenu). Endpoint: POST /cache/refresh.
+export const REFRESH_MASTER_CACHE = async (token) => {
+  const res = await Fetch("POST", `${apiV1}/cache/refresh`, {}, null, token.atoken);
+  return res;
+}
+
 export const GET_DATA_INFO_CELENDAR_VIEW = async (data, token) => {
   // const res = await Fetch("POST", `${apiV1}/management/menu/delete`, data, null, token.atoken);
 
