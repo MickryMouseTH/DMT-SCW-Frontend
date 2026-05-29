@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import { Redirect, Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
 import { Row, Col } from "antd";
+import Swal from "sweetalert2";
 
 import DefaultMenu from "./DefaultMenu";
 import HeadTitle from "./HeadTitle";
 // import Hidden from "../../components/grid/Hidden";
 import { isLogin, userLogout } from "../../redux/actions/authAction";
+import { heartbeatAPI, versionAPI } from "../../service/api/auth";
 import { BrowserView, MobileView } from "react-device-detect";
 import _navbar from "../../_navbar";
 import _route from "../../route/";
@@ -17,9 +19,22 @@ import Skeleton from "../../components/loading/Loading"
 let _navPmsMenu = [];
 let _routePms = [];
 
+// --- Session heartbeat config ---
+const HEARTBEAT_INTERVAL_MS = 30000; // poll every 30s
+const SESSION_WARN_SECONDS = 300;    // warn when < 5 min left
+
 const DefaultLayout = (props) => {
   const lng = localStorage.getItem("i18nextLng");
   const [loading, setLoading] = useState(false);
+
+  // Always read the freshest token inside the interval (avoids a stale closure
+  // after a token refresh). warnedRef makes the "about to expire" popup show
+  // once per threshold-crossing instead of on every 30s tick.
+  const tokenRef = useRef(props.auth.token);
+  const warnedRef = useRef(false);
+  useEffect(() => {
+    tokenRef.current = props.auth.token;
+  });
 
   useEffect(() => {
     _navPmsMenu = filterMenu();
@@ -30,6 +45,57 @@ const DefaultLayout = (props) => {
     checkLogin();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Poll /heartbeat on logged-in pages. The Fetch wrapper already bounces the
+  // user to login on 401/F203/F204; here we additionally warn before expiry.
+  useEffect(() => {
+    const tick = async () => {
+      const token = tokenRef.current;
+      if (_isEmpty(token) || _isEmpty(token.atoken)) return;
+
+      const res = await heartbeatAPI(token);
+      const code = res && res.status ? res.status.code : undefined;
+      // Session already gone — the wrapper handles the redirect; stop here.
+      if (code === "F203" || code === "F204") return;
+
+      // remainingSeconds may sit at the top level or under `data`.
+      let remaining = res && res.remainingSeconds;
+      if (remaining === undefined && res && res.data) remaining = res.data.remainingSeconds;
+      if (typeof remaining !== "number") return;
+
+      if (remaining < SESSION_WARN_SECONDS) {
+        if (!warnedRef.current) {
+          warnedRef.current = true;
+          showSessionWarning();
+        }
+      } else {
+        warnedRef.current = false; // timer was renewed — re-arm the warning
+      }
+    };
+
+    const id = setInterval(tick, HEARTBEAT_INTERVAL_MS);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const showSessionWarning = () => {
+    Swal.fire({
+      icon: "warning",
+      title: "เซสชันกำลังจะหมดอายุ",
+      text: "เซสชันของคุณกำลังจะหมดอายุ ต้องการใช้งานต่อหรือไม่?",
+      showCancelButton: true,
+      confirmButtonText: "ใช้งานต่อ",
+      cancelButtonText: "ออกจากระบบ",
+      allowOutsideClick: false,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await versionAPI(tokenRef.current); // touch the server to bump the timer
+        warnedRef.current = false;
+      } else {
+        props.userLogout(() => props.history.push("/login"));
+      }
+    });
+  };
 
   const checkLogin = () => {
     setLoading(true);

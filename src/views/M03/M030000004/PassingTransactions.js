@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { Typography, Table, Button, Modal, Row, Col, Pagination } from "antd";
 import Skeleton from "../../../components/loading/Loading"
 import FullscreenImageModal from "../../../components/imagePreview/FullscreenImageModal";
+import FullscreenVideoModal from "../../../components/imagePreview/FullscreenVideoModal";
 
 import moment from "moment";
 import FormDefault from "../../../components/form/FormDefault";
@@ -48,10 +49,10 @@ const PassingTransactions = (props) => {
   const [scroll, setScroll] = useState({});
   const [visible, setVisible] = useState(false);
   const [previewImg, setPreviewImg] = useState([])
-  const [visibleVdo, setVisibleVdo] = useState(false);
-  const [previewVdo, setPreviewVdo] = useState([])
   // v1.5.12 — single image url shown in the FullscreenImageModal popup
   const [fullscreenImg, setFullscreenImg] = useState(null);
+  // v1.5.16 — single video url shown in the FullscreenVideoModal popup
+  const [fullscreenVdo, setFullscreenVdo] = useState(null);
 
   const [PagintaionSize, setPaginationSize] = useState({
     pageNumber: 1,
@@ -739,10 +740,10 @@ const PassingTransactions = (props) => {
     setVisible(true)
   }
 
+  // v1.5.16 — play the clip in an in-app fullscreen popup instead of a new
+  // browser window (was window.open before).
   const previewVideo = (data) => {
-    window.open(data.videoUrl, '_blank', 'width=800,height=600', 'resizable=true');
-    // setPreviewVdo(data.videoUrl);
-    // setVisibleVdo(true);
+    setFullscreenVdo(data.videoUrl);
   }
 
   // v1.5.12 — clicking an image in the Image Preview modal opens a
@@ -1043,29 +1044,18 @@ const PassingTransactions = (props) => {
             )}
           </Row>
         </Modal>
-        <Modal
-          title="Video Preview"
-          centered
-          visible={visibleVdo}
-          onOk={() => setVisibleVdo(false)}
-          onCancel={() => setVisibleVdo(false)}
-          width={500}
-          cancelButtonProps={{ style: { display: 'none' } }}
-        >
-          <Row className="d-flex justify-content-around">
-            {
-              <Col span={24}  >
-                <Col className="d-flex justify-content-center" span={24}><img src={previewVdo} alt={previewVdo} width="100%" height="100%" /></Col>
-              </Col>
-            }
-          </Row>
-        </Modal>
-
         {/* v1.5.12 — fullscreen image popup; opens when a thumbnail in the
             Image Preview modal is clicked. Replaces the legacy window.open. */}
         <FullscreenImageModal
           src={fullscreenImg}
           onClose={() => setFullscreenImg(null)}
+        />
+
+        {/* v1.5.16 — fullscreen video popup; opens from the "วีดีโอ" button.
+            Replaces the legacy window.open new-window behaviour. */}
+        <FullscreenVideoModal
+          src={fullscreenVdo}
+          onClose={() => setFullscreenVdo(null)}
         />
       </div>
     </Skeleton>

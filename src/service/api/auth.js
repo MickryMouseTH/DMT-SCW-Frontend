@@ -19,4 +19,17 @@ export const chngePasswordAPI = async (data, token) => {
   return res;
 }
 
+// Session keep-alive. heartbeat is polled on logged-in pages to read how much
+// session time is left (remainingSeconds) and to detect expiry (F203/F204/401).
+// version is a no-op call used as a "touch" to bump the server-side session
+// timer when the user clicks "Stay logged in".
+export const heartbeatAPI = async (token) => {
+  const res = await Fetch("GET", `${apiV1}/heartbeat`, {}, null, token.atoken);
+  return res;
+}
+export const versionAPI = async (token) => {
+  const res = await Fetch("GET", `${apiV1}/version`, {}, null, token.atoken);
+  return res;
+}
+
 

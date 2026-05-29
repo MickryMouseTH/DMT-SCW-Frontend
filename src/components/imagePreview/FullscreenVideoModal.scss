@@ -1,0 +1,33 @@
+// FullscreenVideoModal styles (v1.5.16)
+// Mirrors FullscreenImageModal: edge-to-edge dark backdrop with the video
+// rendered at 90% of the popup body. Themed via the existing token layer.
+
+.fullscreen-video-modal {
+  .ant-modal-content {
+    background: transparent;
+    box-shadow: none;
+  }
+  .ant-modal-body {
+    background: transparent;
+  }
+  .ant-modal-close-x {
+    color: #ffffff;
+    font-size: 22px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  }
+}
+
+// Video fills 90% of the popup body, letterboxed on black, aspect kept.
+.fullscreen-video-modal__video {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+  display: block;
+  background: #000;
+}
+
+// Stronger backdrop dim so the video pops, in both light and dark themes
+.fullscreen-video-modal-wrap + .ant-modal-mask,
+.ant-modal-mask:has(+ .ant-modal-wrap .fullscreen-video-modal) {
+  background-color: rgba(0, 0, 0, 0.88) !important;
+}
