@@ -12,26 +12,36 @@ Every time any file in this repo is changed, you MUST:
 2. Update **this `CLAUDE.md`** to keep the Claude memory in sync.
 3. **Bump the program version** in `src/contrainers/DefaultLayout/DefaultMenu.js`
    (sidebar footer) and in the `scw-frontend-version.md` banner.
-4. **Put to git** — `make build` to verify, then commit **and push** to
-   `origin/main`.
+4. **Put to git** — `make build` (Docker Compose build) to verify, then commit
+   **and push** to `origin/main`. Run the server with `make serve` (Docker
+   Compose, nginx on :8080) to check it live.
 
 ## Commands
 
+**Build and run the server through Docker Compose** (the host has no
+node/npm/yarn — the Makefile targets wrap `docker compose`):
+
 ```bash
-# Development server
-yarn start          # or: npm start
+# Production build — runs craco build inside the `frontend-build` container
+# (6 GB heap) and writes ./build + ./dist to the host.
+make build          # = docker compose build/run frontend-build (clean-all first)
 
-# Production build (allocates 6 GB heap — required)
-yarn build          # or: npm run build
+# Run the server — nginx serves ./build on http://localhost:8080
+make serve          # = docker compose up -d frontend-serve
+make stop           # = docker compose down  (stops serve/dev containers)
+make logs           # tail container logs
 
-# Tests
-yarn test           # interactive watch mode
-yarn test --watchAll=false   # single run
+# Dev hot-reload server on http://localhost:3000 (inside Docker)
+make dev            # = docker compose up -d frontend-dev
 
-# Docker deployment (after build)
-make run            # start containers
-make stop           # stop containers
+# Tests — one-shot Jest run in the `frontend-test` container, coverage → ./coverage
+make test
 ```
+
+> Always build with `make build` and serve with `make serve` (Docker Compose).
+> Do **not** rely on a host `yarn build` / `yarn start` — node is not installed
+> on the host. The compose services (`frontend-dev` :3000, `frontend-build`,
+> `frontend-test`, `frontend-serve` :8080) are defined in `docker-compose.yaml`.
 
 All scripts go through **craco**, not react-scripts directly. Do not invoke `react-scripts` commands directly.
 
@@ -133,6 +143,48 @@ Both are wired into all 11 report views (M030000001/004/011, M050000003,
 M060000006/011/013/016E, M080000004 + Page2, M080000018) with the same
 4-edit pattern: import → `useState(null)` → handler calls the setter →
 render `<…Modal src={…} onClose={…} />`.
+
+### Dashboard traffic chart (v1.5.19)
+
+`src/views/Dashboard/Dashboard.js` renders **two** side-by-side
+`react-google-charts` **LineCharts** of the last-24-hours hourly traffic
+volume — **one coloured line per plaza**, legend pinned to the **right**:
+
+- **Chart 1 — ด่านขาเข้า (inbound):** `plazaId` 1, 2, 6, 12, 15, 16, 21, 31, 41, 42
+- **Chart 2 — ด่านขาออก (outbound):** `plazaId` 36, 37, 31, 26, 27, 11
+
+The returned `plazas[]` is filtered into the two groups by the
+`INBOUND_PLAZA_IDS` / `OUTBOUND_PLAZA_IDS` module constants. Charts are
+**dark-mode aware** via `useTheme()` (`isDark` drives axis/legend/grid colours;
+`backgroundColor: "transparent"`). The view **auto-reloads every 30 s** via
+`setInterval(loadData, 30000)`.
+
+Clicking a plaza's line fires the chart `select` event and opens
+**`FullscreenChartModal`** (`src/components/chart/`, same Ant `<Modal
+width="96vw">` pattern as the imagePreview modals) showing that plaza's 24h
+traffic **split by payment method** (one line per `byPayment` key, legend right,
+also dark-mode aware).
+
+- **Locked payment colours/order** (`PAYMENT_ORDER` / `PAYMENT_COLORS` exported
+  from `FullscreenChartModal.js`): เงินสด = เขียวอ่อน `#8BC34A` · คูปอง = ม่วง
+  `#9C27B0` · EMV = ฟ้า `#29B6F6` · QRCode(KBANK) = เขียวเข้ม `#1B7A3D` ·
+  Easy Pass = น้ำเงิน `#1565C0` · M-PASS = ส้ม `#FB8C00`. Columns are reordered
+  to `PAYMENT_ORDER` and `options.colors` is built in the same order so each
+  payment keeps its colour; unknown keys render grey after the known ones.
+- Data source: `GET_DASHBOARD_HOURLY_TRAFFIC` in `src/service/api/report.js`
+  (`POST /report/dashboardHourlyTraffic/search`). Contract:
+  `docs/api-dashboard-hourly-traffic.md`. Response shape:
+  `{ hours: string[24], plazas:[{ plazaId, plazaNameTh, total[24],
+  byPayment{ [pay]: number[24] } }] }` — all arrays length-24 and index-aligned
+  with `hours`. One API call powers everything: main charts use `plaza.total`,
+  drill-down uses `plaza.byPayment`.
+- `select` maps `column-1` → the clicked group's plaza index (column 0 is the
+  hours axis); a `plazasRef` keeps the latest data for the callback across
+  auto-reloads.
+- **Mock fallback:** a non-`S200`/error response falls back to deterministic
+  mock data (all inbound+outbound plaza ids, the 6 payment names) so the charts
+  + drill-down still demo before the backend is live. Remove the
+  `buildMockData` fallback once the endpoint ships.
 
 ### Internationalisation
 

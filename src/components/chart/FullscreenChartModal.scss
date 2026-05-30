@@ -1,0 +1,21 @@
+// FullscreenChartModal styles (v1.5.19)
+// Near-fullscreen popup that hosts the per-plaza payment-breakdown line
+// chart. Themed through the existing token layer so it works in dark mode.
+
+.fullscreen-chart-modal {
+  .ant-modal-content {
+    background: var(--card_bg, #ffffff);
+  }
+  .ant-modal-body {
+    // The google-charts <Chart> needs a sized parent to fill height: 100%.
+    > div {
+      height: 100%;
+    }
+  }
+}
+
+// Slightly darker backdrop so the chart popup stands out.
+.fullscreen-chart-modal-wrap + .ant-modal-mask,
+.ant-modal-mask:has(+ .ant-modal-wrap .fullscreen-chart-modal) {
+  background-color: rgba(0, 0, 0, 0.65) !important;
+}

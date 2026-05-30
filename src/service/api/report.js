@@ -2761,7 +2761,22 @@ export const DOWNLOAD_FILE_M100000003 = async (data, token) => {
       a.download = data.fileName;
       document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
       a.click();
-      a.remove();  //afterwards we remove the element again  
+      a.remove();  //afterwards we remove the element again
     });
+  return res;
+};
+
+// ------ Dashboard — ปริมาณจราจร 24 ชม. ย้อนหลัง รายชั่วโมง แยกตามด่าน (v1.5.19) -----
+// Response shape (see docs/api-dashboard-hourly-traffic.md):
+//   { status, hours: string[24], plazas: [{ plazaId, plazaNameTh,
+//     total: number[24], byPayment: { [payment]: number[24] } }] }
+export const GET_DASHBOARD_HOURLY_TRAFFIC = async (data, token) => {
+  const res = await Fetch(
+    "POST",
+    `${apiV1}/report/dashboardHourlyTraffic/search`,
+    data,
+    null,
+    token.atoken
+  );
   return res;
 };

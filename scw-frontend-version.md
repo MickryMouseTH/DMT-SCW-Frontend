@@ -1,9 +1,16 @@
 # DMT SCW Frontend — Project Context & Version Log
 
-> **Program Version: 1.5.18** — menu 9.8 (`M090000008 ManageMenu` —
-> จัดการข้อมูลเมนู) gains a **"Refresh Master"** button (after "เพิ่มข้อมูลเมนู")
-> that calls `POST /cache/refresh` to rebuild the backend master-data cache.
-> See the Version History (§10) for the full 1.5.14 → 1.5.18 trail.
+> **Program Version: 1.5.19** — the **Dashboard** page now renders **two**
+> side-by-side last-24-hours hourly-traffic line charts (ด่านขาเข้า / ด่านขาออก,
+> split by `plazaId`), **one line per plaza**, legend pinned right, dark-mode
+> aware. Clicking a plaza's line opens a **fullscreen popup**
+> (`FullscreenChartModal`) showing that plaza's traffic **split by payment
+> method** with **colours locked per payment** (เงินสด/คูปอง/EMV/QRCode(KBANK)/
+> Easy Pass/M-PASS). The view **auto-reloads every 30 s**. New API
+> `GET_DASHBOARD_HOURLY_TRAFFIC` (`POST /report/dashboardHourlyTraffic/search`,
+> contract in `docs/api-dashboard-hourly-traffic.md`); falls back to mock data
+> until the backend is live.
+> See the Version History (§10) for the full 1.5.14 → 1.5.19 trail.
 
 This document (formerly `PROJECT_CONTEXT.md`) is the primary source of truth
 for the project. Read it before making any change.
@@ -22,8 +29,14 @@ for the project. Read it before making any change.
 3. **Bump the program version** — increment the version in
    `src/contrainers/DefaultLayout/DefaultMenu.js` (sidebar footer) and the
    banner at the top of this file.
-4. **Put to git** — `make build` to verify, then commit **and push** the
-   change (branch `main`, push to `origin`).
+4. **Put to git** — verify with **`make build` (Docker Compose build)**, then
+   commit **and push** the change (branch `main`, push to `origin`). Use
+   **`make serve` (Docker Compose, nginx on :8080)** to run/check the server.
+
+> **Build & run via Docker Compose only.** The host has no node/npm/yarn —
+> `make build` runs the production build inside the `frontend-build` container
+> and `make serve` runs nginx (`frontend-serve`) on http://localhost:8080.
+> Do not rely on a host `yarn build` / `yarn start`. See §6–§7 for details.
 
 This rule is mandatory and applies to code, styles, config, and docs alike.
 
@@ -447,22 +460,32 @@ make clean     # remove build/dist/coverage/logs
 
 ## 7. Build / Run Instructions
 
-### 7.1 Local (host node)
+### 7.1 Docker Compose (the supported way — build & run here)
+
+The host has **no node/npm/yarn** installed; build and run everything through
+Docker Compose via the Makefile shortcuts:
+
+```bash
+make dev              # dev hot-reload server  → http://localhost:3000
+make build            # production build (frontend-build container) → ./build + ./dist
+make serve            # run server: nginx (frontend-serve) → http://localhost:8080
+make stop             # docker compose down (stop dev/serve)
+make test             # one-shot Jest run → ./coverage
+make logs             # tail container logs
+```
+
+`make build` runs `clean-all` then `docker compose build --no-cache
+frontend-build` + `docker compose run --rm frontend-build`, writing the bundle
+to the host `./build` and `./dist`. `make serve` then mounts `./build` into the
+`nginx:1.25-alpine` `frontend-serve` container on host port **8080**.
+
+### 7.2 Local (host node) — only if node is installed
 
 ```bash
 yarn install
 yarn start            # dev server :3000
-yarn build            # production bundle into ./build
+yarn build            # production bundle into ./build (needs 6 GB heap)
 yarn test --watchAll=false
-```
-
-### 7.2 Docker (recommended for CI / parity)
-
-```bash
-make dev              # http://localhost:3000
-make build            # ./build populated on host
-make test             # ./coverage populated on host
-make serve            # http://localhost:8080 (nginx)
 ```
 
 ---
@@ -599,3 +622,4 @@ above. Config constants: `HEARTBEAT_INTERVAL_MS = 30000`,
 | 1.5.16  | 2026-05-29 | **In-app fullscreen video + session management.** New `FullscreenVideoModal` (`src/components/imagePreview/`) — pilot on menu 3.4; the NVR stream API (`DMT_API_STREAM_NVR/apistream.py`, FastAPI `/video_feed`) returns **MJPEG** (`multipart/x-mixed-replace`), which `<video>` cannot play, so the popup renders it via `<img>` at 90% of the popup. **Session strategy:** the central `Fetch` wrapper (`src/tools/fecth.js`) now acts as a global fetch interceptor — any response with HTTP **401** or status code **F203/F204** clears the token and redirects to login (loop-guarded, defensive JSON parse). Added `heartbeatAPI` / `versionAPI`; `DefaultLayout` **polls `/heartbeat` every 30 s** on logged-in pages and, when `remainingSeconds < 300`, shows a "session about to expire" Swal with a **"Stay logged in"** action that pings `/version` to bump the server timer (warned once per threshold-crossing; token read via ref to avoid stale closures). |
 | 1.5.18  | 2026-05-29 | Menu 9.8 (`M090000008 ManageMenu` — จัดการข้อมูลเมนู) — added a **"Refresh Master"** action button placed right after "เพิ่มข้อมูลเมนู" (search mode only). It confirms via Swal then calls the new `REFRESH_MASTER_CACHE` service (`POST ${apiV1}/cache/refresh`, i.e. `/dmt-scw/api/v1/cache/refresh`) to rebuild the backend master-data cache, surfacing success/error from `res.status`. |
 | 1.5.17  | 2026-05-29 | **`FullscreenVideoModal` rolled out to all 10 remaining report views** (same list as the 1.5.13 image rollout) — each got the same 4-edit transform (import + `fullscreenVdo` useState + `previewVideo` body now `setFullscreenVdo(...)` + `<FullscreenVideoModal/>`). No more `window.open(videoUrl, '_blank')` for video previews anywhere in `src/views/`. Docs: **renamed `PROJECT_CONTEXT.md` → `scw-frontend-version.md`** and added the **Maintenance Rule (§0)** — update `scw-frontend-version.md` + `CLAUDE.md`, bump version, and put to git on every change. |
+| 1.5.19  | 2026-05-30 | **Dashboard traffic chart.** `src/views/Dashboard/Dashboard.js` (was an empty stub) now renders **two** side-by-side `react-google-charts` **LineCharts** of the last-24-hours hourly traffic volume — **one coloured line per plaza**, legend pinned **right**, **dark-mode aware** via `useTheme()` (axis/legend/grid colours + transparent bg). Chart 1 = **ด่านขาเข้า** (`plazaId` 1,2,6,12,15,16,21,31,41,42), Chart 2 = **ด่านขาออก** (`plazaId` 36,37,31,26,27,11) — the returned `plazas[]` is filtered into the two groups by `INBOUND_PLAZA_IDS`/`OUTBOUND_PLAZA_IDS`. Clicking a plaza's line fires the chart `select` event and opens a new **`FullscreenChartModal`** (`src/components/chart/`, same Ant `<Modal width="96vw">` pattern as `FullscreenImageModal`, also dark-mode aware) showing that plaza's 24h traffic **broken down by payment method** with **colours + order locked per payment** (`PAYMENT_ORDER`/`PAYMENT_COLORS`): เงินสด=เขียวอ่อน `#8BC34A`, คูปอง=ม่วง `#9C27B0`, EMV=ฟ้า `#29B6F6`, QRCode(KBANK)=เขียวเข้ม `#1B7A3D`, Easy Pass=น้ำเงิน `#1565C0`, M-PASS=ส้ม `#FB8C00`. The view **auto-reloads every 30 s** via `setInterval`. New service `GET_DASHBOARD_HOURLY_TRAFFIC` (`POST ${apiV1}/report/dashboardHourlyTraffic/search`) with the contract in `docs/api-dashboard-hourly-traffic.md` — response `{ hours: string[24], plazas:[{ plazaId, plazaNameTh, total[24], byPayment{ [pay]: number[24] } }] }`. Until the backend exists, a non-`S200`/error response falls back to deterministic **mock data** so the charts + drill-down demo. |
