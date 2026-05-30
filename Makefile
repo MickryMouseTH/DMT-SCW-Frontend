@@ -1,6 +1,6 @@
 # DMT SCW Frontend — Docker workflow shortcuts.
 
-.PHONY: dev build test serve stop logs clean clean-all prune
+.PHONY: dev build rebuild test serve stop logs clean clean-all prune
 
 # Full clean: host artifacts + Docker images + node_modules/yarn volumes.
 # Prereq for build/test so every one-shot run starts from scratch.
@@ -19,6 +19,20 @@ build: clean-all
 	docker compose run --rm frontend-build
 	docker compose down --remove-orphans
 	@echo "Build artifacts written to ./build and ./dist"
+
+# Fast rebuild (~30 s) — reuse the EXISTING build image + node_modules/yarn
+# cache volumes and only re-run the CRACO build. Use this when only ./src or
+# ./public changed (the common case while developing). The source is bind-
+# mounted at runtime, so no image rebuild / yarn install is needed.
+#
+# First run on a clean machine auto-builds the image with layer cache (still
+# fast on re-runs). Use the full `make build` when package.json / yarn.lock /
+# Dockerfile change, or for a guaranteed-clean release build.
+rebuild:
+	mkdir -p build dist logs
+	docker compose run --rm frontend-build
+	docker compose down --remove-orphans
+	@echo "Fast build → ./build and ./dist (use 'make build' if deps/Dockerfile changed)"
 
 test: clean-all
 	mkdir -p coverage logs

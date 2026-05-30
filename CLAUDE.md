@@ -22,9 +22,15 @@ Every time any file in this repo is changed, you MUST:
 node/npm/yarn — the Makefile targets wrap `docker compose`):
 
 ```bash
-# Production build — runs craco build inside the `frontend-build` container
-# (6 GB heap) and writes ./build + ./dist to the host.
-make build          # = docker compose build/run frontend-build (clean-all first)
+# Production build — full clean (no-cache image rebuild + fresh yarn install),
+# runs craco build inside the `frontend-build` container, writes ./build + ./dist.
+# Use after package.json / yarn.lock / Dockerfile changes, or for a clean release.
+make build          # = clean-all + docker compose build --no-cache + run frontend-build
+
+# Fast rebuild (~30 s) — reuses the existing image + node_modules/yarn cache and
+# only re-runs the craco build. Use when ONLY ./src or ./public changed (the
+# common case). ./src is bind-mounted at runtime, so no reinstall is needed.
+make rebuild        # = docker compose run --rm frontend-build (no clean, no --no-cache)
 
 # Run the server — nginx serves ./build on http://localhost:8080
 make serve          # = docker compose up -d frontend-serve
